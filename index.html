@@ -298,7 +298,7 @@
   <main>
     <header>
       <div>
-    <h1>Malnacidos Suno v6 Prompt Automator v16</h1>
+    <h1>Malnacidos Suno v6 Prompt Automator v17</h1>
         <p>Generador minimalista para variar subgeneros sin perder el ADN.</p>
       </div>
       <div class="key">FORMULA MALNACIDOS V6 BUENA</div>
@@ -526,21 +526,21 @@
         ]
       },
       "Rap Congalero": {
-        bpm: 65,
-        bpms: [62, 64, 65, 67, 70],
-        moods: ["oscuro", "callejero", "serio", "fiestero", "alegre", "antre congalero"],
-        era: ["clasico rap de cantina", "moderno rap congalero", "hibrido congal callejero"],
-        base: "Rap congalero de barrio",
-        drums: ["drums secos con swing", "kick pesado y snare seca", "ritmo lento de cantina", "bateria minima con pocket", "percusion seca discreta", "drums crudos sin rolls"],
-        bass: ["bajo redondo lento", "bajo simple de cantina", "sub bass corto", "bajo con slides leves", "bassline grave repetitiva", "bajo seco con espacio"],
-        lead: ["piano electrico oscuro", "synth organ congalero", "teclado minimo de bar", "bell oscuro", "riff de teclado seco", "acorde menor repetitivo"],
-        accent: ["fill de teclado corto", "hit de organ", "campana de bar discreta", "silencio antes del hook", "staccato de piano seco", "respuesta corta de synth"],
-        extras: ["esqueleto minimalista", "ambiente de congal", "noche de cantina", "mucho espacio para rap", "pocas capas", "calle y tragos"],
-        bans: ["no trap", "no EDM", "no pop", "no lo-fi chill", "no lounge jazz", "no glossy commercial sound"],
-        lessAmericanBans: ["no smooth jazz", "no cinematic", "no bright party beat", "no clean radio mix"],
+        bpm: 96,
+        bpms: [90, 94, 96, 98, 100, 104],
+        moods: ["congalero", "fiestero sucio", "callejero", "perreo rapero", "alegre malandro", "antre de barrio"],
+        era: ["rap mexicano congalero", "electro rap callejero", "hibrido Malnacidos party sucio"],
+        base: "Rap congalero mexicano",
+        drums: ["drums con bounce de antro", "kick seco y clap callejero", "snare seca con swing", "percusion sencilla de fiesta", "drums pesados sin rolls", "ritmo rapero para bailar"],
+        bass: ["808 corto y rebotado", "sub bass de antro", "bajo simple y pesado", "bassline juguetona oscura", "low end gordo", "bajo con rebote seco"],
+        lead: ["synth pluck de barrio", "lead electro rasposo", "organ stab seco", "bell callejero simple", "riff de synth pegajoso", "piano seco de fiesta"],
+        accent: ["drop para hook", "sirenazo corto", "vocal chop sin voz clara", "silencio antes del coro", "fill de percusion corto", "stutter seco de synth"],
+        extras: ["para perrear y rapear", "hook instrumental pegajoso", "fiesta de barrio", "pocas capas", "mezcla seca y fuerte", "energia de teibol sin sonar pop"],
+        bans: ["no corridos", "no guitarras tumbadas", "no banda", "no trumpet", "no EDM festival", "no boom bap polvoso", "no lo-fi chill", "no trap hi-hat overload"],
+        lessAmericanBans: ["no club rap gringo", "no radio pop", "no tropical house", "no glossy commercial sound"],
         presets: [
-          { name: "Base A", mood: "antre congalero", bpm: 65, era: "hibrido congal callejero", drums: "drums secos con swing", bass: "bajo redondo lento", lead: "piano electrico oscuro", accent: "fill de teclado corto", textures: ["esqueleto minimalista", "ambiente de congal"] },
-          { name: "Base B", mood: "callejero", bpm: 64, era: "clasico rap de cantina", drums: "ritmo lento de cantina", bass: "bajo simple de cantina", lead: "synth organ congalero", accent: "hit de organ", textures: ["noche de cantina", "mucho espacio para rap"] }
+          { name: "Base A", mood: "congalero", bpm: 96, era: "hibrido Malnacidos party sucio", drums: "drums con bounce de antro", bass: "808 corto y rebotado", lead: "synth pluck de barrio", accent: "drop para hook", textures: ["para perrear y rapear", "hook instrumental pegajoso"] },
+          { name: "Base B", mood: "fiestero sucio", bpm: 100, era: "electro rap callejero", drums: "kick seco y clap callejero", bass: "sub bass de antro", lead: "lead electro rasposo", accent: "sirenazo corto", textures: ["fiesta de barrio", "mezcla seca y fuerte"] }
         ]
       },
       "Trap": {
@@ -817,6 +817,8 @@
     function compactEra(value) {
       return value
         .replace("hibrido Malnacidos crudo", "Malnacidos crudo")
+        .replace("hibrido Malnacidos party sucio", "Malnacidos party sucio")
+        .replace("rap mexicano congalero", "mexicano congalero")
         .replace("hibrido west coast callejero", "west coast callejero")
         .replace("hibrido raw actual", "raw actual")
         .replace("hibrido barras de calle", "barras de calle")
