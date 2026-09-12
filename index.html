@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Malnacidos Suno v6 Prompt Automator v9</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0b0c;
+      --panel: #151517;
+      --panel2: #101012;
+      --line: #2a2a2e;
+      --text: #f2f2f2;
+      --muted: #a8a8ad;
+      --accent: #d7ff4f;
+      --danger: #ff6961;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    main {
+      width: min(1160px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 24px 0 36px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      line-height: 1;
+      margin: 0 0 8px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 1rem;
+      margin: 18px 0 10px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .key {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--accent);
+      white-space: nowrap;
+      font-size: .88rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 410px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+      margin-bottom: 7px;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0f0f11;
+      color: var(--text);
+      padding: 10px 11px;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field { margin-bottom: 13px; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .locks {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .lock, .switch {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--panel2);
+      color: var(--muted);
+      padding: 9px;
+      margin: 0;
+      font-size: .82rem;
+      cursor: pointer;
+    }
+
+    .lock input, .switch input {
+      width: auto;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--muted);
+      background: var(--panel2);
+      font-size: .82rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .chip.active {
+      color: #111;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 7px;
+      background: var(--accent);
+      color: #111;
+      padding: 10px 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .ab-control {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-top: 12px;
+    }
+
+    button.secondary {
+      background: #242428;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    button.secondary.active {
+      background: var(--accent);
+      color: #111;
+      border-color: var(--accent);
+    }
+
+    button.danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid rgba(255, 105, 97, .55);
+    }
+
+    .formula {
+      display: grid;
+      gap: 9px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .formula strong, .small-head strong { color: var(--text); }
+    .warning { color: var(--danger); }
+
+    .prompt-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+
+    .prompt-head label { margin: 0; }
+
+    .count {
+      color: var(--accent);
+      font-size: .82rem;
+      white-space: nowrap;
+    }
+
+    .status {
+      min-height: 20px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
+    .status.good { color: var(--accent); }
+    .status.warn { color: var(--danger); }
+
+    .variant-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .variant-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel2);
+      padding: 11px;
+    }
+
+    .variant-card textarea {
+      min-height: 112px;
+      margin-top: 8px;
+      background: #0b0b0c;
+    }
+
+    .small-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: .84rem;
+    }
+
+    .bank {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel2);
+      padding: 10px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: .86rem;
+    }
+
+    @media (max-width: 860px) {
+      header { display: block; }
+      .key { display: inline-block; margin-top: 14px; white-space: normal; }
+      .grid { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+      .ab-control { grid-template-columns: 1fr; }
+      .locks { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+    <h1>Malnacidos Suno v6 Prompt Automator v16</h1>
+        <p>Generador minimalista para variar subgeneros sin perder el ADN.</p>
+      </div>
+      <div class="key">FORMULA MALNACIDOS V6 BUENA</div>
+    </header>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="field">
+          <label for="genre">Subgenero</label>
+          <select id="genre" onchange="loadGenre()">
+            <option>Rap Underground</option>
+            <option>Rap Congalero</option>
+            <option>Trap</option>
+            <option>Drill</option>
+            <option>Bangers</option>
+            <option>Reggaeton</option>
+            <option>G-Funk</option>
+            <option>Boom Bap</option>
+            <option>Conscious / Street Rap</option>
+            <option>R&B</option>
+            <option>Corridos Tumbados Beat</option>
+            <option>Corridos Tumbados Requinto</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="preset">Preset oficial</label>
+          <select id="preset" onchange="applyPreset()">
+              <option>Base A</option>
+              <option>Base B</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="intensity">Intensidad de variacion</label>
+            <select id="intensity">
+              <option value="1">Suave - 1 cambio</option>
+              <option value="2" selected>Media - 2 cambios</option>
+              <option value="3">Pesada - 3 cambios</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="mood">Mood</label>
+            <select id="mood">
+              <option>oscuro</option>
+              <option>callejero</option>
+              <option>agresivo</option>
+              <option>serio</option>
+              <option>sensual crudo</option>
+              <option>triste pero callejero</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bpm">BPM</label>
+            <input id="bpm" type="number" min="60" max="100" value="86">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="era">Era / sabor</label>
+          <select id="era">
+            <option>hibrido Malnacidos crudo</option>
+            <option>clasico casete noventero</option>
+            <option>moderno under seco</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Candados para variar controlado</label>
+          <div class="locks">
+            <label class="lock"><input id="lockMood" type="checkbox"> Mood</label>
+            <label class="lock"><input id="lockBpm" type="checkbox"> BPM</label>
+            <label class="lock"><input id="lockEra" type="checkbox"> Era</label>
+            <label class="lock" id="lockDrumsWrap"><input id="lockDrums" type="checkbox"> Drums</label>
+            <label class="lock"><input id="lockBass" type="checkbox"> Bajo</label>
+            <label class="lock"><input id="lockLead" type="checkbox"> Instrumento</label>
+            <label class="lock"><input id="lockAccent" type="checkbox"> Acento</label>
+            <label class="lock"><input id="lockTextures" type="checkbox"> Texturas</label>
+          </div>
+        </div>
+
+        <div class="field" id="drumsField">
+          <label for="drums">Drums / ritmo</label>
+          <select id="drums">
+            <option>drums secos y pesados</option>
+            <option>bateria humana seca</option>
+            <option>drums con swing flojo</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="bass">Bajo</label>
+          <select id="bass">
+            <option>bajo oscuro</option>
+            <option>bajo simple y pesado</option>
+            <option>bajo profundo</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="lead">Instrumento principal</label>
+          <select id="lead">
+            <option>loop terco</option>
+            <option>loop oscuro repetitivo</option>
+            <option>piano minimo oscuro</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="accent">Acento / adorno</label>
+          <select id="accent">
+            <option>scratch cuts secos</option>
+            <option>vinyl stab</option>
+            <option>drop seco</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="structure">Estructura</label>
+          <select id="structure">
+            <option>intro, verse, hook, verse, hook, bridge, outro</option>
+            <option>intro, hook, verse, hook, verse, bridge, outro</option>
+            <option>intro, verse, hook, verse, hook, outro</option>
+            <option>intro, verse, verse, hook, bridge, hook, outro</option>
+            <option>cypher: intro, long verse, rapper switch, long verse, short break, outro</option>
+            <option>cypher: intro, 32-bar verse, 32-bar verse, beat drop, 32-bar verse, outro</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Textura extra</label>
+          <div class="chips" id="textures"></div>
+        </div>
+
+        <div class="field">
+          <label class="switch"><input id="lessAmerican" type="checkbox" checked> Modo menos gringo</label>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="generate" onclick="handleAction('generate', this)">Generar prompt</button>
+          <button type="button" class="secondary" id="reset" onclick="handleAction('reset', this)">Reset base</button>
+        </div>
+
+        <div class="formula">
+          <div><strong>Regla:</strong> cambia solo 1 o 2 variables por tirada.</div>
+          <div><strong>Estructura fija:</strong> full 3-minute instrumental.</div>
+          <div><strong>Minimalista:</strong> deja lo esencial y corta adorno sobrante.</div>
+          <div class="warning" id="blocked"></div>
+          <div class="bank" id="bank"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="field">
+          <div class="prompt-head">
+            <label for="prompt">Prompt listo para Suno</label>
+            <span class="count" id="charCount">0 chars</span>
+          </div>
+          <textarea id="prompt" spellcheck="false">Rap under de barrio, oscuro, hibrido Malnacidos crudo, drums secos y pesados, bajo oscuro, loop terco, scratch cuts secos, pocos sonidos, mucho espacio para rap, 86 BPM. Full 3-minute instrumental. Arrangement: intro, verse, hook, verse, hook, bridge, outro. No vocals, no trap, no EDM, no pop.</textarea>
+          <div class="formula">
+            <div class="warning" id="quality"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="copy" onclick="handleAction('copy', this)">Copiar</button>
+          <button type="button" class="secondary" id="minimal" onclick="handleAction('minimal', this)">Minimalista</button>
+          <button type="button" class="secondary" id="variant" onclick="handleAction('variant', this)">Variacion controlada</button>
+          <button type="button" class="secondary" id="four" onclick="handleAction('four', this)">4 variantes</button>
+          <button type="button" class="secondary" id="copyAll" onclick="handleAction('copyAll', this)">Copiar variantes</button>
+          <button type="button" class="secondary" id="save" onclick="handleAction('save', this)">Guardar ganador</button>
+          <button type="button" class="secondary" id="exportSaved" onclick="handleAction('exportSaved', this)">Exportar ganadores .txt</button>
+        </div>
+
+        <div class="ab-control">
+          <div>
+            <label for="abTarget">Prueba exacta A/B</label>
+            <select id="abTarget">
+              <option value="drums" id="abDrumsOption">Solo drums</option>
+              <option value="bass">Solo bajo</option>
+              <option value="lead">Solo instrumento</option>
+              <option value="accent">Solo acento</option>
+              <option value="era">Solo era</option>
+              <option value="bpm">Solo BPM</option>
+              <option value="structure">Solo estructura</option>
+              <option value="textures">Solo texturas</option>
+              <option value="drumsBass" id="abDrumsBassOption">Drums + bajo</option>
+              <option value="leadAccent">Instrumento + acento</option>
+            </select>
+          </div>
+          <button type="button" class="secondary" id="ab" onclick="handleAction('ab', this)">Generar A/B</button>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <h2>Variantes</h2>
+        <div class="variant-list" id="variants"></div>
+
+        <h2>Ganadores guardados</h2>
+        <div class="variant-list" id="saved"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const data = {
+      "Rap Underground": {
+        bpm: 86,
+        bpms: [84, 85, 86, 87, 88],
+        era: ["clasico casete noventero", "moderno under seco", "hibrido Malnacidos crudo"],
+        base: "Rap under de barrio",
+        drums: ["drums secos y pesados", "kick pesado y snare seca", "drum break oscuro", "bateria humana seca", "hats flojos sin rolls", "rimshot seco"],
+        bass: ["bajo oscuro", "bajo simple y pesado", "sub bass limpio", "bajo corto repetitivo", "bajo filtrado", "bassline grave minima"],
+        lead: ["loop terco", "sample filtrado oscuro", "piano minimo oscuro", "organ seco", "bell oscuro", "string stab seco"],
+        accent: ["scratch cuts secos", "vinyl stab", "one-shot oscuro", "drop seco", "reverse sample corto", "silencio antes del hook"],
+        extras: ["pocos sonidos", "mucho espacio para rap", "textura sucia", "mezcla seca", "cuarto chico", "calle de noche"],
+        bans: ["no trap", "no EDM", "no pop"],
+        lessAmericanBans: ["no lo-fi chill", "no jazz lounge", "no cinematic", "no glossy pop"],
+        presets: [
+          { name: "Base A", mood: "oscuro", bpm: 86, era: "hibrido Malnacidos crudo", drums: "drums secos y pesados", bass: "bajo oscuro", lead: "loop terco", accent: "scratch cuts secos", textures: ["pocos sonidos", "mucho espacio para rap"] },
+          { name: "Base B", mood: "callejero", bpm: 85, era: "clasico casete noventero", drums: "bateria humana seca", bass: "bajo simple y pesado", lead: "sample filtrado oscuro", accent: "vinyl stab", textures: ["textura sucia", "calle de noche"] }
+        ]
+      },
+      "Rap Congalero": {
+        bpm: 65,
+        bpms: [62, 64, 65, 67, 70],
+        moods: ["oscuro", "callejero", "serio", "fiestero", "alegre", "antre congalero"],
+        era: ["clasico rap de cantina", "moderno rap congalero", "hibrido congal callejero"],
+        base: "Rap congalero de barrio",
+        drums: ["drums secos con swing", "kick pesado y snare seca", "ritmo lento de cantina", "bateria minima con pocket", "percusion seca discreta", "drums crudos sin rolls"],
+        bass: ["bajo redondo lento", "bajo simple de cantina", "sub bass corto", "bajo con slides leves", "bassline grave repetitiva", "bajo seco con espacio"],
+        lead: ["piano electrico oscuro", "synth organ congalero", "teclado minimo de bar", "bell oscuro", "riff de teclado seco", "acorde menor repetitivo"],
+        accent: ["fill de teclado corto", "hit de organ", "campana de bar discreta", "silencio antes del hook", "staccato de piano seco", "respuesta corta de synth"],
+        extras: ["esqueleto minimalista", "ambiente de congal", "noche de cantina", "mucho espacio para rap", "pocas capas", "calle y tragos"],
+        bans: ["no trap", "no EDM", "no pop", "no lo-fi chill", "no lounge jazz", "no glossy commercial sound"],
+        lessAmericanBans: ["no smooth jazz", "no cinematic", "no bright party beat", "no clean radio mix"],
+        presets: [
+          { name: "Base A", mood: "antre congalero", bpm: 65, era: "hibrido congal callejero", drums: "drums secos con swing", bass: "bajo redondo lento", lead: "piano electrico oscuro", accent: "fill de teclado corto", textures: ["esqueleto minimalista", "ambiente de congal"] },
+          { name: "Base B", mood: "callejero", bpm: 64, era: "clasico rap de cantina", drums: "ritmo lento de cantina", bass: "bajo simple de cantina", lead: "synth organ congalero", accent: "hit de organ", textures: ["noche de cantina", "mucho espacio para rap"] }
+        ]
+      },
+      "Trap": {
+        bpm: 140,
+        bpms: [130, 135, 140, 145, 150],
+        moods: ["oscuro", "callejero", "agresivo", "fiestero", "serio"],
+        era: ["clasico trap oscuro", "moderno trap minimalista", "hibrido Malnacidos trap"],
+        base: "Trap oscuro de barrio",
+        drums: ["trap drums secos", "808 kick seco", "hi-hats controlados sin rolls", "snare seca con espacio", "clap corto", "percusion minima"],
+        bass: ["808 profundo", "808 con slides leves", "sub bass redondo", "808 corto y pesado", "bassline oscura", "low end limpio"],
+        lead: ["bell oscuro", "piano menor", "synth pad oscuro", "pluck de tres notas", "synth lead frio", "acorde menor seco"],
+        accent: ["reverse hit", "drop seco", "string stab oscuro", "silencio antes del hook", "texture glitch low", "fill de synth corto"],
+        extras: ["pocos elementos", "espacio para rap", "calle nocturna", "mezcla seca", "sin brillo comercial", "drums no compiten"],
+        bans: ["no EDM", "no pop", "no hi-hat overload", "no glossy commercial sound"],
+        lessAmericanBans: ["no melodic pop trap", "no cinematic", "no party EDM", "no clean radio mix"],
+        presets: [
+          { name: "Base A", mood: "oscuro", bpm: 140, era: "hibrido Malnacidos trap", drums: "trap drums secos", bass: "808 profundo", lead: "bell oscuro", accent: "reverse hit", textures: ["pocos elementos", "espacio para rap"] },
+          { name: "Base B", mood: "agresivo", bpm: 145, era: "moderno trap minimalista", drums: "hi-hats controlados sin rolls", bass: "808 con slides leves", lead: "piano menor", accent: "drop seco", textures: ["calle nocturna", "mezcla seca"] }
+        ]
+      },
+      "Drill": {
+        bpm: 142,
+        bpms: [135, 138, 142, 145, 148],
+        moods: ["oscuro", "callejero", "agresivo", "serio"],
+        era: ["clasico drill crudo", "moderno drill seco", "hibrido drill de barrio"],
+        base: "Drill oscuro de barrio",
+        drums: ["drill drums secos", "kick irregular con espacio", "snare seca sincopada", "hi-hats cortados", "rimshot oscuro", "percusion minima"],
+        bass: ["808 con slides", "808 gliding oscuro", "sub bass profundo", "808 corto entre golpes", "bajo grave agresivo", "low end seco"],
+        lead: ["piano oscuro repetitivo", "bell frio", "pluck siniestro", "string stab menor", "synth oscuro corto", "pad tenso minimo"],
+        accent: ["808 slide accent", "silencio antes del golpe", "reverse stab", "hit metalico seco", "fill corto de piano", "drop oscuro"],
+        extras: ["tension de calle", "pocas capas", "espacio para barras", "ambiente frio", "mezcla seca", "sin brillo comercial"],
+        bans: ["no EDM", "no pop", "no happy melody", "no hi-hat overload", "no cinematic soundtrack"],
+        lessAmericanBans: ["no UK garage", "no glossy drill", "no orchestral drama", "no clean radio mix"],
+        presets: [
+          { name: "Base A", mood: "oscuro", bpm: 142, era: "hibrido drill de barrio", drums: "drill drums secos", bass: "808 con slides", lead: "piano oscuro repetitivo", accent: "silencio antes del golpe", textures: ["tension de calle", "espacio para barras"] },
+          { name: "Base B", mood: "agresivo", bpm: 145, era: "moderno drill seco", drums: "kick irregular con espacio", bass: "808 gliding oscuro", lead: "bell frio", accent: "reverse stab", textures: ["ambiente frio", "mezcla seca"] }
+        ]
+      },
+      "Bangers": {
+        bpm: 92,
+        bpms: [88, 90, 92, 94, 96],
+        moods: ["agresivo", "oscuro", "callejero", "fiestero", "antre congalero"],
+        era: ["clasico rap banger 90s", "moderno street banger", "hibrido Malnacidos banger"],
+        base: "Rap banger crudo de barrio",
+        drums: ["hard kick y snare seca", "drums pesados con swing", "stomp drums de calle", "kick golpeador", "snare grande y seca", "hats firmes sin rolls"],
+        bass: ["bajo pesado y simple", "808 corto con golpe", "sub bass agresivo", "bassline grave repetitiva", "bajo seco de banger", "low end duro"],
+        lead: ["synth stab agresivo", "piano oscuro de dos notas", "organ stab seco", "bell pesado", "pluck de synth corto", "sample stab crudo"],
+        accent: ["impact hit seco", "vocal chop sin voces", "drop antes del hook", "sirena synth discreta", "record stop corto", "silencio de tension"],
+        extras: ["energia de calle", "pocas capas", "hook instrumental fuerte", "espacio para rap", "mezcla cruda", "sin brillo comercial"],
+        bans: ["no EDM", "no pop", "no festival sound", "no glossy commercial sound"],
+        lessAmericanBans: ["no club EDM", "no happy pop", "no cinematic", "no clean radio mix"],
+        presets: [
+          { name: "Base A", mood: "agresivo", bpm: 92, era: "hibrido Malnacidos banger", drums: "hard kick y snare seca", bass: "bajo pesado y simple", lead: "synth stab agresivo", accent: "impact hit seco", textures: ["energia de calle", "hook instrumental fuerte"] },
+          { name: "Base B", mood: "fiestero", bpm: 90, era: "clasico rap banger 90s", drums: "drums pesados con swing", bass: "808 corto con golpe", lead: "organ stab seco", accent: "drop antes del hook", textures: ["pocas capas", "espacio para rap"] }
+        ]
+      },
+      "Reggaeton": {
+        bpm: 94,
+        bpms: [88, 90, 92, 94, 96],
+        moods: ["oscuro", "callejero", "agresivo", "fiestero", "sensual crudo", "antre congalero"],
+        era: ["clasico reggaeton 2000s crudo", "moderno reggaeton oscuro", "hibrido reggaeton Malnacidos"],
+        base: "Reggaeton oscuro de barrio",
+        drums: ["dembow seco clasico", "kick y snare crudos", "percusion dembow minima", "clap seco de reggaeton", "drums con swing callejero", "rimshot seco"],
+        bass: ["bajo sub grave", "bassline dembow simple", "808 corto", "bajo con slides leves", "bajo redondo", "low end seco"],
+        lead: ["synth pluck oscuro", "piano menor seco", "bell caribeno oscuro", "pluck de dos notas", "synth lead frio", "acorde menor repetitivo"],
+        accent: ["perreo fill corto", "vocal chop sin voces", "reverse hit", "silencio antes del hook", "stab de synth seco", "fill de piano corto"],
+        extras: ["pocas capas", "espacio para voz", "perreo oscuro", "calle nocturna", "mezcla seca", "sin brillo comercial"],
+        bans: ["no EDM", "no pop", "no glossy commercial sound", "no afrobeat", "no tropical house"],
+        lessAmericanBans: ["no reggaeton pop", "no romantic radio sound", "no bright party synths", "no clean commercial mix"],
+        presets: [
+          { name: "Base A", mood: "callejero", bpm: 92, era: "clasico reggaeton 2000s crudo", drums: "dembow seco clasico", bass: "bassline dembow simple", lead: "piano menor seco", accent: "perreo fill corto", textures: ["pocas capas", "espacio para voz"] },
+          { name: "Base B", mood: "oscuro", bpm: 96, era: "moderno reggaeton oscuro", drums: "percusion dembow minima", bass: "808 corto", lead: "synth pluck oscuro", accent: "reverse hit", textures: ["perreo oscuro", "mezcla seca"] }
+        ]
+      },
+      "G-Funk": {
+        bpm: 88,
+        bpms: [86, 87, 88, 89, 90],
+        era: ["clasico 90s lowrider", "moderno oscuro sin fiesta", "hibrido west coast callejero"],
+        base: "G-Funk oscuro de barrio",
+        drums: ["drums lentos con groove", "slow hypnotic drums", "kick redondo con swing", "clap seco", "laid-back hats", "sleigh bells muy bajos"],
+        bass: ["phat synth bass line", "moog bass oscuro", "bajo funky pesado", "bajo electrico tocado", "bassline profunda", "bajo con swing"],
+        lead: ["high-pitched portamento synth", "synth whistle fino", "low synth stab", "soulful keys secos", "clav stab seco", "funk rhythm guitar"],
+        accent: ["talkbox-style synth sin voces", "wah guitar lick", "Minimoog lead", "P-Funk sample replay", "sleigh bells bajos", "tape hiss leve"],
+        extras: ["pocos elementos", "calle nocturna", "no brillo comercial", "groove bajo tierra", "melodia lenta y dura", "espacio para voz"],
+        bans: ["no trap", "no EDM", "no pop"],
+        lessAmericanBans: ["no bright party funk", "no glossy pop", "no disco", "no clean radio mix"],
+        presets: [
+          { name: "Base A", mood: "oscuro", bpm: 88, era: "hibrido west coast callejero", drums: "drums lentos con groove", bass: "moog bass oscuro", lead: "synth whistle fino", accent: "talkbox-style synth sin voces", textures: ["pocos elementos", "minimal"] },
+          { name: "Base B", mood: "callejero", bpm: 87, era: "moderno oscuro sin fiesta", drums: "kick redondo con swing", bass: "bajo funky pesado", lead: "low synth stab", accent: "wah guitar lick", textures: ["calle nocturna", "no brillo comercial"] }
+        ]
+      },
+      "Boom Bap": {
+        bpm: 88,
+        bpms: [86, 87, 88, 89, 90],
+        era: ["clasico NY 90s", "moderno grimey drum break", "hibrido raw actual"],
+        base: "Boom bap noventero crudo",
+        drums: ["hard kick snare hi-hat", "drum break seco", "breakbeat cortado", "drums sucios con swing", "snare dura", "kick polvoso"],
+        bass: ["sampled bass loop", "bajo simple", "bajo corto", "bajo filtrado", "upright bass sample oscuro", "bassline seca"],
+        lead: ["sample oscuro", "chopped soul sample", "piano oscuro", "string stab oscuro", "organ stab seco", "loop polvoso"],
+        accent: ["DJ scratch hook", "vinyl crackle leve", "MPC chop", "record stop corto", "sample stab seco", "turntable cut"],
+        extras: ["stripped-down beat", "textura polvosa", "mezcla cruda y seca", "callejon", "head-nod crudo", "poca progresion"],
+        bans: ["no trap", "no EDM", "no pop"],
+        lessAmericanBans: ["no lo-fi chill", "no smooth jazz", "no cinematic", "no glossy pop"],
+        presets: [
+          { name: "Base A", mood: "oscuro", bpm: 88, era: "clasico NY 90s", drums: "drum break seco", bass: "sampled bass loop", lead: "sample oscuro", accent: "DJ scratch hook", textures: ["textura polvosa", "callejon"] },
+          { name: "Base B", mood: "callejero", bpm: 87, era: "hibrido raw actual", drums: "drums sucios con swing", bass: "bajo corto", lead: "piano oscuro", accent: "vinyl crackle leve", textures: ["mezcla cruda y seca", "crudo"] }
+        ]
+      },
+      "Conscious / Street Rap": {
+        bpm: 86,
+        bpms: [84, 85, 86, 87, 88],
+        era: ["clasico mensaje con boom bap", "moderno street rap sobrio", "hibrido barras de calle"],
+        base: "Rap consciente de calle",
+        drums: ["drums secos", "bateria humana sobria", "boom bap tranquilo", "snare seca", "kick sobrio", "breakbeat limpio"],
+        bass: ["bajo profundo", "bajo oscuro", "bajo simple", "bajo serio repetitivo", "sub bajo controlado", "bajo electrico sobrio"],
+        lead: ["loop serio", "piano seco", "guitar pluck seco", "organ bajo", "melodia minima", "sample soul oscuro"],
+        accent: ["string stab sobrio", "scratch corto", "street texture low", "vinyl stab", "minor chord answer", "silencio dramatico"],
+        extras: ["tension tranquila", "espacio para barras", "mood realista", "pocos adornos", "narrativa de calle", "drums no compiten"],
+        bans: ["no trap", "no EDM", "no pop"],
+        lessAmericanBans: ["no chillhop", "no lo-fi", "no spoken word beat", "no glossy pop"],
+        presets: [
+          { name: "Base A", mood: "serio", bpm: 86, era: "hibrido barras de calle", drums: "drums secos", bass: "bajo profundo", lead: "loop serio", accent: "string stab sobrio", textures: ["tension tranquila", "espacio para barras"] },
+          { name: "Base B", mood: "callejero", bpm: 85, era: "moderno street rap sobrio", drums: "bateria humana sobria", bass: "bajo oscuro", lead: "piano seco", accent: "scratch corto", textures: ["mood realista", "cuarto chico"] }
+        ]
+      },
+      "R&B": {
+        bpm: 82,
+        bpms: [78, 80, 82, 84, 86],
+        era: ["clasico 90s R&B bounce", "moderno R&B callejero", "hibrido slow jam under"],
+        base: "R&B callejero oscuro",
+        drums: ["drums lentos con bounce", "drums pesados pero suaves", "pocket groove con swing", "rimshot suave", "snaps secos", "soft kick con cuerpo"],
+        bass: ["bajo profundo con movimiento", "bajo gordo con slides", "bajo electrico redondo", "sub bass sensual", "bassline melodica", "bajo que respira con kick"],
+        lead: ["chords secos", "chords cortos y secos", "Wurlitzer oscuro", "electric piano seco", "muted guitar chords", "short minor chords", "pluck oscuro"],
+        accent: ["respuesta de guitarra corta", "chord stab sensual", "pad bajo muy discreto", "delay corto en keys", "air texture oscuro", "countermelody minima"],
+        extras: ["groove sensual", "espacio para voz", "sensual crudo", "noche lenta", "aire oscuro", "sin sonar chill beat"],
+        bans: ["no pop", "no neo soul", "no chill beat"],
+        lessAmericanBans: ["no lounge", "no glossy pop", "no trap soul", "no bright synth pad"],
+        presets: [
+          { name: "Base A", mood: "sensual crudo", bpm: 82, era: "moderno R&B callejero", drums: "drums lentos con bounce", bass: "bajo profundo con movimiento", lead: "chords secos", accent: "respuesta de guitarra corta", textures: ["groove sensual", "espacio para voz"] },
+          { name: "Base B", mood: "oscuro", bpm: 80, era: "hibrido slow jam under", drums: "drums pesados pero suaves", bass: "bajo gordo con slides", lead: "chords cortos y secos", accent: "chord stab sensual", textures: ["sensual crudo", "minimal"] }
+        ]
+      },
+      "Corridos Tumbados Beat": {
+        bpm: 84,
+        bpms: [80, 82, 83, 84, 86],
+        era: ["clasico tumbado temprano", "moderno post-Peso con tuba 808", "hibrido requinto con beat sobrio"],
+        base: "Corrido tumbado oscuro",
+        moods: ["oscuro", "callejero", "serio", "fiestero", "alegre", "antre congalero"],
+        drums: ["drums tumbados lentos", "snare seca en 2 y 4", "rimshot con reverb leve", "hats simples sin rolls locos", "kick suave de beat", "percusion seca minima"],
+        bass: ["tuba 808 sub", "bajo pesado", "bajo profundo con slides leves", "bassline tumbada", "sub grave tipo tuba", "bajo simple"],
+        lead: ["requinto simple", "guitarra punteada seca", "guitarra seca muy simple", "bajo sexto chops", "melodia seria", "armonias cortas"],
+        accent: ["requinto fill corto", "accordion sample discreto", "rasgueo seco", "tuba respuesta corta", "guitar slide tumbado", "silencio antes del hook"],
+        extras: ["groove de barrio", "pocos elementos", "barrio y desvelo", "tumbado oscuro", "melodia no llorona", "requinto manda la bateria"],
+        bans: ["no EDM", "no pop", "no banda", "no trumpet", "no trap hi-hat overload"],
+        lessAmericanBans: ["no regional pop", "no shiny guitar", "no banda brass", "no glossy pop"],
+        presets: [
+          { name: "Base A", mood: "oscuro", bpm: 84, era: "hibrido requinto con beat sobrio", drums: "drums tumbados lentos", bass: "tuba 808 sub", lead: "requinto simple", accent: "requinto fill corto", textures: ["groove de barrio", "pocos elementos"] },
+          { name: "Base B", mood: "callejero", bpm: 83, era: "moderno post-Peso con tuba 808", drums: "snare seca en 2 y 4", bass: "bajo profundo con slides leves", lead: "guitarra punteada seca", accent: "accordion sample discreto", textures: ["barrio y desvelo", "melodia seria"] }
+        ]
+      },
+      "Corridos Tumbados Requinto": {
+        bpm: 83,
+        bpms: [78, 80, 82, 83, 84],
+        era: ["clasico nata temprano puro", "moderno requinto limpio sin beat", "hibrido sierreno tumbado puro"],
+        base: "Corrido tumbado puro",
+        moods: ["oscuro", "callejero", "serio", "fiestero", "alegre", "antre congalero"],
+        drums: ["sin drums", "no percussion", "rasgueo seco sin beat", "solo rasgueo natural", "sin bateria", "sin kick ni snare"],
+        bass: ["bajo sexto simple", "bajo sexto seco", "bajo quinto grave", "bajo sexto minimo", "bajo sexto con respuesta", "12-string rhythm guitar"],
+        lead: ["guitarra requinteada", "requinto al frente", "requinto viejo", "guitarra punteada", "requinto seco", "requinto con arpegios"],
+        accent: ["requinto run corto", "arpegios de intro", "rasgueo seco", "bajo sexto answer", "escala rapida de requinto", "instrumental break de requinto"],
+        extras: ["melodia de barrio", "mood serio y tumbado", "puro corrido", "sin beat moderno", "pocas capas", "corrido tumbado temprano"],
+        bans: ["no drums", "no beat", "no trap", "no pop", "no trumpet", "no banda"],
+        lessAmericanBans: ["no modern beat", "no banda brass", "no regional pop", "no glossy pop"],
+        presets: [
+          { name: "Base A", mood: "serio", bpm: 83, era: "clasico nata temprano puro", drums: "sin drums", bass: "bajo sexto simple", lead: "guitarra requinteada", accent: "requinto run corto", textures: ["rasgueo seco", "melodia de barrio"] },
+          { name: "Base B", mood: "callejero", bpm: 82, era: "hibrido sierreno tumbado puro", drums: "no percussion", bass: "bajo sexto seco", lead: "requinto al frente", accent: "arpegios de intro", textures: ["mood serio y tumbado", "crudo"] }
+        ]
+      }
+    };
+
+    const textureList = ["minimal", "crudo", "calle de noche", "mucho espacio", "textura dusty", "pocos adornos", "mix seco", "sin brillo"];
+    const defaultLessAmericanBans = ["no lo-fi chill", "no cinematic", "no glossy pop"];
+    const defaultMoods = ["oscuro", "callejero", "agresivo", "serio", "sensual crudo", "triste pero callejero"];
+    const fieldIds = ["mood", "bpm", "era", "drums", "bass", "lead", "accent", "structure", "lessAmerican"];
+    const $ = (id) => document.getElementById(id);
+    let variantPrompts = [];
+    let minimalMode = false;
+
+    function fillSelect(select, values, keepValue) {
+      const previous = keepValue ? select.value : "";
+      select.innerHTML = "";
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.textContent = value;
+        option.value = value;
+        select.appendChild(option);
+      });
+      if (keepValue && values.includes(previous)) select.value = previous;
+    }
+
+    function getGenre() {
+      return data[$("genre").value];
+    }
+
+    function getPreset() {
+      const genre = getGenre();
+      return genre.presets.find((preset) => preset.name === $("preset").value) || genre.presets[0];
+    }
+
+    function updateGenreControls() {
+      const requintoOnly = $("genre").value === "Corridos Tumbados Requinto";
+      $("drumsField").style.display = requintoOnly ? "none" : "";
+      $("lockDrumsWrap").style.display = requintoOnly ? "none" : "";
+      $("abDrumsOption").hidden = requintoOnly;
+      $("abDrumsBassOption").hidden = requintoOnly;
+      if (requintoOnly && ["drums", "drumsBass"].includes($("abTarget").value)) {
+        $("abTarget").value = "lead";
+      }
+    }
+
+    function getMoodOptions() {
+      return [...$("mood").options].map((option) => option.value);
+    }
+
+    function getStructureOptions() {
+      return [...$("structure").options].map((option) => option.value);
+    }
+
+    function selectedTextures() {
+      return [...document.querySelectorAll(".chip.active")].map((chip) => chip.dataset.value);
+    }
+
+    const emptyAccent = "vacio (sin adorno)";
+    function accentOptions(genre) {
+      const breakdown = genreNameFor(genre) === "Corridos Tumbados Requinto"
+        ? "breakdown breve de requinto y bajo sexto, sin bateria"
+        : "breakdown breve, baja la bateria y deja el instrumento principal";
+      return uniqueList([...genre.accent, emptyAccent, breakdown]);
+    }
+    function genreNameFor(genre) { return Object.keys(data).find((name) => data[name] === genre) || ""; }
+
+    function setSelectedTextures(values) {
+      document.querySelectorAll(".chip").forEach((chip) => {
+        chip.classList.toggle("active", values.includes(chip.dataset.value));
+      });
+    }
+
+    function renderTextureChips(values, activeValues) {
+      $("textures").innerHTML = "";
+      values.forEach((texture) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.dataset.value = texture;
+        chip.textContent = texture;
+        chip.classList.toggle("active", activeValues.includes(texture));
+        chip.addEventListener("click", () => {
+          chip.classList.toggle("active");
+          renderPrompt();
+        });
+        $("textures").appendChild(chip);
+      });
+    }
+
+    function uniqueList(values) {
+      const seen = new Set();
+      return values.filter((value) => {
+        const key = value.toLowerCase().trim();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function compactEra(value) {
+      return value
+        .replace("hibrido Malnacidos crudo", "Malnacidos crudo")
+        .replace("hibrido west coast callejero", "west coast callejero")
+        .replace("hibrido raw actual", "raw actual")
+        .replace("hibrido barras de calle", "barras de calle")
+        .replace("hibrido slow jam under", "slow jam under")
+        .replace("hibrido requinto con beat sobrio", "requinto con beat sobrio")
+        .replace("hibrido sierreno tumbado puro", "sierreno tumbado puro")
+        .replace("clasico casete noventero", "clasico noventero")
+        .replace("moderno under seco", "under moderno seco")
+        .replace("moderno oscuro sin fiesta", "moderno oscuro")
+        .replace("moderno grimey drum break", "grimey drum break")
+        .replace("moderno street rap sobrio", "street rap sobrio")
+        .replace("moderno R&B callejero", "R&B callejero moderno")
+        .replace("moderno post-Peso con tuba 808", "post-Peso tuba 808")
+        .replace("moderno requinto limpio sin beat", "requinto limpio sin beat");
+    }
+
+    function compactTextures(state, genre) {
+      const pool = uniqueList([...state.textures, ...genre.extras]);
+      const priority = /espacio|pocos|minimal|crudo|calle|puro corrido|sin beat|requinto manda|groove/i;
+      const picked = [];
+      const firstPriority = pool.find((value) => priority.test(value));
+      if (firstPriority) picked.push(firstPriority);
+      const secondPriority = pool.find((value) => value !== firstPriority && /voz|rap|pocas capas|melodia de barrio|no brillo|sin sonar chill/i.test(value));
+      if (secondPriority) picked.push(secondPriority);
+      if (!picked.length && pool[0]) picked.push(pool[0]);
+      return picked.slice(0, 2);
+    }
+
+    function compactBans(state, genre) {
+      const core = ["No vocals", ...genre.bans];
+      const extra = state.lessAmerican ? (genre.lessAmericanBans || defaultLessAmericanBans).slice(0, 2) : [];
+      return uniqueList([...core, ...extra]);
+    }
+
+    function captureState() {
+      return {
+        genreName: $("genre").value,
+        mood: $("mood").value,
+        bpm: $("bpm").value,
+        era: $("era").value,
+        drums: $("drums").value,
+        bass: $("bass").value,
+        lead: $("lead").value,
+        accent: $("accent").value,
+        structure: $("structure").value,
+        textures: selectedTextures(),
+        lessAmerican: $("lessAmerican").checked
+      };
+    }
+
+    function buildPrompt(state, compact = minimalMode) {
+      const genre = data[state.genreName];
+      const era = compact ? compactEra(state.era) : state.era;
+      const textures = compact ? compactTextures(state, genre) : state.textures;
+      const parts = uniqueList([
+        genre.base,
+        state.mood,
+        era,
+        state.drums,
+        state.bass,
+        state.lead,
+        state.accent === emptyAccent ? "" : state.accent,
+        ...textures
+      ]);
+      const bans = compact ? compactBans(state, genre) : uniqueList([
+          "No vocals",
+          ...genre.bans,
+          ...(state.lessAmerican ? (genre.lessAmericanBans || defaultLessAmericanBans) : [])
+        ]);
+      const format = state.structure.startsWith("cypher:")
+        ? "Full 3-minute cypher instrumental, no hook section"
+        : "Full 3-minute instrumental";
+      return `${parts.join(", ")}, ${state.bpm} BPM. ${format}. Arrangement: ${state.structure}. ${bans.join(", ")}.`;
+    }
+
+    function updateCounts(text) {
+      $("charCount").textContent = `${text.length} chars`;
+    }
+
+    function updateQuality(state, prompt) {
+      const notes = [];
+      if (prompt.length > 1000) notes.push("Ojo: ya pasa 1000 caracteres.");
+      if (minimalMode) notes.push("Minimalista activo.");
+      if (!minimalMode && prompt.length > 420) notes.push("Si Suno se distrae, prueba Minimalista.");
+      if (!state.lessAmerican) notes.push("Modo menos gringo apagado.");
+      if (state.genreName === "R&B" && !/bounce|slides|movimiento|moving/i.test(`${state.drums} ${state.bass}`)) {
+        notes.push("R&B puede caer chill si no trae bounce o bajo con movimiento.");
+      }
+      if (state.genreName === "Corridos Tumbados Requinto" && !/no drums/i.test(prompt)) {
+        notes.push("Requinto necesita bloqueo No drums.");
+      }
+      $("quality").textContent = notes.join(" ");
+    }
+
+    function renderBank() {
+      const genre = getGenre();
+      $("blocked").textContent = "Bloqueos: " + genre.bans.join(", ");
+      $("bank").innerHTML = [
+        `<strong>Drums:</strong> ${genre.drums.join(" / ")}`,
+        `<strong>Bajo:</strong> ${genre.bass.join(" / ")}`,
+        `<strong>Era:</strong> ${genre.era.join(" / ")}`,
+        `<strong>Instrumentos:</strong> ${genre.lead.join(" / ")}`,
+        `<strong>Acentos:</strong> ${genre.accent.join(" / ")}`,
+        `<strong>Texturas:</strong> ${genre.extras.join(" / ")}`
+      ].join("<br>");
+    }
+
+    function renderPrompt() {
+      const state = captureState();
+      const prompt = buildPrompt(state);
+      $("prompt").value = prompt;
+      updateCounts(prompt);
+      updateQuality(state, prompt);
+      renderBank();
+    }
+
+    function updateMinimalButton() {
+      $("minimal").classList.toggle("active", minimalMode);
+      $("minimal").textContent = minimalMode ? "Minimalista ON" : "Minimalista";
+    }
+
+    function showStatus(message, tone = "") {
+      $("status").textContent = message;
+      $("status").className = `status ${tone}`.trim();
+    }
+
+    function flashButton(button, text) {
+      if (!button) return;
+      const original = button.textContent;
+      button.textContent = text;
+      setTimeout(() => button.textContent = original, 900);
+    }
+
+    function loadGenre() {
+      const genre = getGenre();
+      updateGenreControls();
+      fillSelect($("preset"), genre.presets.map((preset) => preset.name), false);
+      fillSelect($("mood"), genre.moods || defaultMoods, false);
+      fillSelect($("era"), genre.era, false);
+      fillSelect($("drums"), genre.drums, false);
+      fillSelect($("bass"), genre.bass, false);
+      fillSelect($("lead"), genre.lead, false);
+      fillSelect($("accent"), accentOptions(genre), false);
+      applyPreset();
+    }
+
+    function applyPreset() {
+      const genre = getGenre();
+      const preset = getPreset();
+      const texturePool = uniqueList([...genre.extras, ...textureList, ...preset.textures]);
+      $("mood").value = preset.mood;
+      $("bpm").value = preset.bpm;
+      $("era").value = preset.era;
+      $("drums").value = preset.drums;
+      $("bass").value = preset.bass;
+      $("lead").value = preset.lead;
+      $("accent").value = preset.accent;
+      renderTextureChips(texturePool, preset.textures);
+      renderPrompt();
+    }
+
+    function randomFrom(values) {
+      return values[Math.floor(Math.random() * values.length)];
+    }
+
+    function randomDifferent(values, current) {
+      const filtered = values.filter((value) => String(value) !== String(current));
+      return randomFrom(filtered.length ? filtered : values);
+    }
+
+    function randomSubset(values, max) {
+      return [...values].sort(() => Math.random() - 0.5).slice(0, max);
+    }
+
+    function cloneState(state) {
+      return { ...state, textures: [...state.textures] };
+    }
+
+    function valuesExcept(values, current) {
+      return values.filter((value) => String(value) !== String(current));
+    }
+
+    function makeSingleFieldAB(seed, key, values, label) {
+      return valuesExcept(values, seed[key]).slice(0, 3).map((value) => ({
+        title: `${label}: ${value}`,
+        state: { ...cloneState(seed), [key]: value }
+      }));
+    }
+
+    function makePairFieldAB(seed, firstKey, firstValues, secondKey, secondValues, label) {
+      const first = valuesExcept(firstValues, seed[firstKey]);
+      const second = valuesExcept(secondValues, seed[secondKey]);
+      if (!first.length || !second.length) return [];
+      const count = Math.min(3, Math.max(first.length, second.length));
+      return Array.from({ length: count }, (_, index) => ({
+        title: `${label}: ${first[index % first.length]} + ${second[index % second.length]}`,
+        state: {
+          ...cloneState(seed),
+          [firstKey]: first[index % first.length],
+          [secondKey]: second[index % second.length]
+        }
+      }));
+    }
+
+    function makeTextureAB(seed) {
+      const genre = data[seed.genreName];
+      const pool = uniqueList([...genre.extras, ...textureList]);
+      const current = seed.textures.join("|");
+      const combos = [];
+      for (let index = 0; index < pool.length && combos.length < 3; index += 1) {
+        const combo = uniqueList([pool[index], pool[(index + 1) % pool.length]]).slice(0, 2);
+        if (combo.join("|") !== current) combos.push(combo);
+      }
+      return combos.map((textures) => ({
+        title: `Texturas: ${textures.join(" + ")}`,
+        state: { ...cloneState(seed), textures }
+      }));
+    }
+
+    function lock(id) {
+      return $(id).checked;
+    }
+
+    function makeRandomState(seed) {
+      const genre = data[seed.genreName];
+      const texturePool = uniqueList([...genre.extras, ...textureList]);
+      const state = { ...seed, textures: [...seed.textures] };
+      const changes = [
+        ["mood", "lockMood", () => randomDifferent(getMoodOptions(), seed.mood)],
+        ["bpm", "lockBpm", () => randomDifferent(genre.bpms, seed.bpm)],
+        ["era", "lockEra", () => randomDifferent(genre.era, seed.era)],
+        ["drums", "lockDrums", () => randomDifferent(genre.drums, seed.drums)],
+        ["bass", "lockBass", () => randomDifferent(genre.bass, seed.bass)],
+        ["lead", "lockLead", () => randomDifferent(genre.lead, seed.lead)],
+        ["accent", "lockAccent", () => randomDifferent(genre.accent, seed.accent)],
+        ["textures", "lockTextures", () => randomSubset(texturePool, 2)]
+      ].filter(([, lockId]) => !lock(lockId));
+      const amount = Math.min(Number($("intensity").value || 2), changes.length);
+      randomSubset(changes, amount).forEach(([key, , makeValue]) => {
+        state[key] = makeValue();
+      });
+      return state;
+    }
+
+    function applyState(state) {
+      $("mood").value = state.mood;
+      $("bpm").value = state.bpm;
+      $("era").value = state.era;
+      $("drums").value = state.drums;
+      $("bass").value = state.bass;
+      $("lead").value = state.lead;
+      $("accent").value = state.accent;
+      $("structure").value = state.structure;
+      $("lessAmerican").checked = state.lessAmerican;
+      setSelectedTextures(state.textures);
+      renderPrompt();
+    }
+
+    function makeVariant() {
+      applyState(makeRandomState(captureState()));
+    }
+
+    function toggleMinimalMode() {
+      minimalMode = !minimalMode;
+      updateMinimalButton();
+      renderPrompt();
+    }
+
+    function makeEraVariant(seed, eraValue) {
+      const state = makeRandomState({ ...seed, era: eraValue });
+      state.era = eraValue;
+      return state;
+    }
+
+    function makeExactAB() {
+      const seed = captureState();
+      const genre = data[seed.genreName];
+      const target = $("abTarget").value;
+      const makers = {
+        drums: () => makeSingleFieldAB(seed, "drums", genre.drums, "Drums"),
+        bass: () => makeSingleFieldAB(seed, "bass", genre.bass, "Bajo"),
+        lead: () => makeSingleFieldAB(seed, "lead", genre.lead, "Instrumento"),
+        accent: () => makeSingleFieldAB(seed, "accent", accentOptions(genre), "Acento"),
+        era: () => makeSingleFieldAB(seed, "era", genre.era, "Era"),
+        bpm: () => makeSingleFieldAB(seed, "bpm", genre.bpms, "BPM"),
+        structure: () => makeSingleFieldAB(seed, "structure", getStructureOptions(), "Estructura"),
+        textures: () => makeTextureAB(seed),
+        drumsBass: () => makePairFieldAB(seed, "drums", genre.drums, "bass", genre.bass, "Drums+Bajo"),
+        leadAccent: () => makePairFieldAB(seed, "lead", genre.lead, "accent", genre.accent, "Inst+Acento")
+      };
+      const variants = [
+        { title: "Base actual", state: seed },
+        ...(makers[target] ? makers[target]() : [])
+      ];
+      variantPrompts = variants.map((item) => ({
+        title: item.title,
+        prompt: buildPrompt(item.state)
+      }));
+      $("variants").innerHTML = "";
+      variantPrompts.forEach((item) => {
+        createPromptCard($("variants"), item.title, item.prompt, false);
+      });
+    }
+
+    function createPromptCard(container, title, prompt, canDelete, index) {
+      const card = document.createElement("div");
+      card.className = "variant-card";
+
+      const head = document.createElement("div");
+      head.className = "small-head";
+
+      const label = document.createElement("strong");
+      label.textContent = title;
+
+      const count = document.createElement("span");
+      count.textContent = `${prompt.length} chars`;
+
+      head.append(label, count);
+
+      const textarea = document.createElement("textarea");
+      textarea.value = prompt;
+      textarea.spellcheck = false;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const copyButton = document.createElement("button");
+      copyButton.type = "button";
+      copyButton.className = "secondary";
+      copyButton.textContent = "Copiar";
+      copyButton.onclick = () => copyText(prompt, copyButton);
+      actions.appendChild(copyButton);
+
+      if (canDelete) {
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "danger";
+        deleteButton.textContent = "Borrar";
+        deleteButton.onclick = () => {
+          deleteSaved(index);
+          showStatus("Ganador borrado.", "good");
+        };
+        actions.appendChild(deleteButton);
+      }
+
+      card.append(head, textarea, actions);
+      container.appendChild(card);
+    }
+
+    function makeFourVariants() {
+      const seed = captureState();
+      const eras = data[seed.genreName].era;
+      const variants = [
+        { title: "Base actual", state: seed },
+        { title: "Clasica", state: makeEraVariant(seed, eras[0]) },
+        { title: "Moderna", state: makeEraVariant(seed, eras[1]) },
+        { title: "Hibrida Malnacidos", state: makeEraVariant(seed, eras[2]) }
+      ];
+      variantPrompts = variants.map((item) => ({
+        title: item.title,
+        prompt: buildPrompt(item.state)
+      }));
+      $("variants").innerHTML = "";
+      variantPrompts.forEach((item) => {
+        createPromptCard($("variants"), item.title, item.prompt, false);
+      });
+    }
+
+    function copyAllVariants() {
+      if (!variantPrompts.length) makeFourVariants();
+      const text = variantPrompts.map((item, index) => {
+        return `${index + 1}. ${item.title}\n${item.prompt}`;
+      }).join("\n\n");
+      return copyText(text, $("copyAll"));
+    }
+
+    function getSaved() {
+      try {
+        return JSON.parse(localStorage.getItem("malnacidosPromptWinners") || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function setSaved(items) {
+      try {
+        localStorage.setItem("malnacidosPromptWinners", JSON.stringify(items));
+      } catch {}
+    }
+
+    function saveWinner() {
+      const state = captureState();
+      const items = getSaved();
+      items.unshift({
+        title: `${state.genreName} ganador`,
+        prompt: buildPrompt(state)
+      });
+      setSaved(items.slice(0, 20));
+      renderSaved();
+    }
+
+    function deleteSaved(index) {
+      const items = getSaved();
+      items.splice(index, 1);
+      setSaved(items);
+      renderSaved();
+    }
+
+    function renderSaved() {
+      const items = getSaved();
+      $("saved").innerHTML = "";
+      if (!items.length) {
+        const empty = document.createElement("p");
+        empty.textContent = "Todavia no hay ganadores guardados en este navegador.";
+        $("saved").appendChild(empty);
+        return;
+      }
+      items.forEach((item, index) => {
+        createPromptCard($("saved"), item.title, item.prompt, true, index);
+      });
+    }
+
+    function exportSaved() {
+      const items = getSaved();
+      const content = [
+        "MALNACIDOS MUSIC - SUNO V6 GANADORES",
+        "Frase llave: FORMULA MALNACIDOS V6 BUENA",
+        "",
+        ...(items.length ? items.map((item, index) => {
+          return `${index + 1}. ${item.title}\n${item.prompt}`;
+        }) : ["Sin ganadores guardados todavia."])
+      ].join("\n\n");
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Malnacidos_Suno_v6_Ganadores.txt";
+      link.click();
+      URL.revokeObjectURL(url);
+      showStatus("Export listo. Si iPhone no descarga, usa Copiar variantes.", "good");
+    }
+
+    async function copyText(text, button) {
+      const value = String(text || "");
+      if (!value.trim()) {
+        showStatus("No hay texto para copiar.", "warn");
+        return false;
+      }
+      let copied = false;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(value);
+          copied = true;
+        }
+      } catch {}
+      if (!copied) {
+        const helper = document.createElement("textarea");
+        helper.value = value;
+        helper.setAttribute("readonly", "");
+        helper.style.position = "fixed";
+        helper.style.left = "0";
+        helper.style.top = "0";
+        helper.style.width = "1px";
+        helper.style.height = "1px";
+        helper.style.opacity = "0.01";
+        document.body.appendChild(helper);
+        try {
+          helper.focus({ preventScroll: true });
+        } catch {
+          helper.focus();
+        }
+        helper.select();
+        helper.setSelectionRange(0, helper.value.length);
+        try {
+          copied = document.execCommand("copy");
+        } catch {}
+        document.body.removeChild(helper);
+      }
+      if (copied) {
+        showStatus("Copiado.", "good");
+        flashButton(button, "Copiado");
+        return true;
+      }
+      $("prompt").value = value;
+      $("prompt").focus();
+      $("prompt").setSelectionRange(0, $("prompt").value.length);
+      showStatus("iPhone bloqueo copiar automatico. Texto seleccionado: toca Copiar.", "warn");
+      flashButton(button, "Seleccionado");
+      return false;
+    }
+
+    async function handleAction(action, button) {
+      try {
+        if (action === "generate") {
+          renderPrompt();
+          showStatus("Prompt generado.", "good");
+        } else if (action === "reset") {
+          loadGenre();
+          showStatus("Base restaurada.", "good");
+        } else if (action === "copy") {
+          await copyText($("prompt").value, button);
+        } else if (action === "minimal") {
+          toggleMinimalMode();
+          showStatus(minimalMode ? "Minimalista activo." : "Minimalista apagado.", "good");
+        } else if (action === "variant") {
+          makeVariant();
+          showStatus("Variacion controlada lista.", "good");
+        } else if (action === "four") {
+          makeFourVariants();
+          showStatus("4 variantes listas.", "good");
+        } else if (action === "ab") {
+          makeExactAB();
+          showStatus("A/B exacto listo.", "good");
+        } else if (action === "copyAll") {
+          await copyAllVariants();
+        } else if (action === "save") {
+          saveWinner();
+          showStatus("Ganador guardado.", "good");
+        } else if (action === "exportSaved") {
+          exportSaved();
+        }
+      } catch (error) {
+        showStatus("Algo fallo en este boton. Ya puedes avisarme con esta pantalla.", "warn");
+        console.error(error);
+      }
+    }
+
+    window.handleAction = handleAction;
+
+    fieldIds.forEach((field) => $(field).addEventListener("change", renderPrompt));
+
+    loadGenre();
+    renderSaved();
+  </script>
+</body>
+</html>
