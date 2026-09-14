@@ -85,6 +85,7 @@
     .section-head h2 { font-size: 13px; }
     .section-head .icon-button { width: 32px; height: 32px; min-height: 32px; flex-basis: 32px; }
     .field { min-width: 0; margin-bottom: 14px; }
+    .active-choice { min-height: 42px; display: flex; align-items: center; padding: 10px 12px; background: var(--field); border: 1px solid var(--line); border-radius: 6px; color: var(--text); font-weight: 550; }
     .field-head { display: flex; align-items: center; justify-content: space-between; min-height: 29px; margin-bottom: 5px; }
     label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 7px; }
     .field-head label { margin: 0; }
@@ -342,8 +343,9 @@
           <section class="control-panel" aria-label="Sonido y estructura">
             <div class="section-head"><h2>Tu base</h2><button id="reset" class="quiet icon-button" title="Restaurar Base A" aria-label="Restaurar Base A" onclick="handleAction('reset', this)"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button></div>
             <div class="field">
-              <label for="genre">Subgenero</label>
-              <select id="genre" onchange="loadGenre()">
+              <label>Subgenero activo</label>
+              <div id="activeGenre" class="active-choice">Rap Underground</div>
+              <select id="genre" class="sr-only" aria-hidden="true" tabindex="-1" onchange="loadGenre()">
                 <option>Rap Underground</option><option>Rap Congalero</option><option>Trap</option><option>Drill</option><option>Bangers</option><option>Reggaeton</option><option>G-Funk</option><option>Boom Bap</option><option>Conscious / Street Rap</option><option>R&amp;B</option><option>Corridos Tumbados Beat</option><option>Corridos Tumbados Requinto</option>
               </select>
             </div>
@@ -1477,6 +1479,7 @@
 
     function updateStudioUI() {
       $("activeSummary").textContent = $("genre").value + " / " + $("preset").value;
+      $("activeGenre").textContent = $("genre").value;
       document.querySelectorAll(".genre-link").forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.genre === $("genre").value));
       });
