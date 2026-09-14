@@ -2,509 +2,446 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Malnacidos Suno v6 Prompt Automator v9</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111314">
+  <meta name="description" content="Malnacidos Music Lab. Generador de prompts instrumentales para Suno.">
+  <title>Malnacidos Music Lab 2.0 | v22</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0b0b0c;
-      --panel: #151517;
-      --panel2: #101012;
-      --line: #2a2a2e;
-      --text: #f2f2f2;
-      --muted: #a8a8ad;
+      --bg: #111314;
+      --sidebar: #17191a;
+      --field: #1b1e20;
+      --line: #303437;
+      --text: #f1f3f2;
+      --muted: #a0a7a9;
       --accent: #d7ff4f;
-      --danger: #ff6961;
+      --cyan: #8dd7df;
+      --danger: #ff9393;
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
+    * { box-sizing: border-box; letter-spacing: 0; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, select, textarea { font: inherit; }
+    button, a, input, select, textarea, summary { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    button, select, input, textarea { border-radius: 6px; }
+    button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 10px 14px; background: var(--accent); color: #172000; border: 1px solid transparent; font-weight: 650; }
+    button:hover:not(:disabled) { filter: brightness(1.08); }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button.secondary { color: var(--text); background: var(--field); border-color: var(--line); }
+    button.quiet { color: var(--muted); background: transparent; }
+    button.danger { color: var(--danger); background: transparent; border-color: var(--line); }
+    button.icon-button { width: 42px; padding: 9px; flex: 0 0 42px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    ::selection { color: #111; background: var(--accent); }
+    .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+    .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .skip-link { position: fixed; top: -70px; left: 16px; z-index: 20; padding: 12px; background: var(--accent); color: #111; }
+    .skip-link:focus { top: 12px; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: 25px; font-weight: 600; line-height: 1.3; }
+    h2 { font-size: 16px; font-weight: 600; }
+    .muted { color: var(--muted); }
+    .sidebar { position: fixed; inset: 0 auto 0 0; width: 218px; display: flex; flex-direction: column; background: var(--sidebar); border-right: 1px solid var(--line); padding: 28px 16px 20px; }
+    .brand { display: flex; gap: 11px; align-items: center; padding: 0 8px 30px; }
+    .brand-mark { color: var(--accent); width: 33px; height: 33px; }
+    .brand strong { display: block; font-size: 14px; }
+    .brand small { color: var(--muted); font-size: 12px; }
+    .main-nav { display: grid; gap: 6px; }
+    .nav-button { width: 100%; justify-content: flex-start; background: transparent; color: var(--muted); font-weight: 500; }
+    .nav-button[aria-current="page"] { background: #292d22; color: var(--accent); }
+    .nav-button .badge { margin-left: auto; }
+    .badge { font-size: 11px; line-height: 1; padding: 5px 6px; border-radius: 4px; background: #2a2e30; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .library-nav { margin-top: 30px; min-height: 0; flex: 1; display: flex; flex-direction: column; }
+    .nav-label { display: flex; justify-content: space-between; padding: 0 10px; margin-bottom: 12px; color: var(--muted); font-size: 11px; font-weight: 650; text-transform: uppercase; }
+    .genre-search { display: flex; align-items: center; gap: 7px; padding: 0 10px; margin-bottom: 8px; color: var(--muted); }
+    .genre-search input { min-width: 0; border: none; background: transparent; padding: 9px 0; color: var(--text); width: 100%; }
+    .genre-links { overflow-y: auto; min-height: 0; scrollbar-width: thin; }
+    .genre-link { width: 100%; justify-content: flex-start; text-align: left; background: transparent; color: var(--muted); font-size: 12px; font-weight: 450; min-height: 35px; padding: 8px 10px; line-height: 1.4; }
+    .genre-link[aria-pressed="true"] { background: #232729; color: var(--text); }
+    .genre-link[aria-pressed="true"]::before { content: ""; width: 4px; height: 14px; background: var(--accent); border-radius: 2px; flex: 0 0 auto; }
+    .no-results { padding: 12px; font-size: 12px; color: var(--muted); }
+    .sidebar-footer { padding: 18px 10px 0; margin-top: 14px; border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+    .sidebar-footer strong { display: block; color: #d7deda; font-size: 12px; margin-bottom: 3px; }
+    .app { margin-left: 218px; }
+    .appbar { height: 68px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; gap: 12px; }
+    .appbar-left, .appbar-right { display: flex; align-items: center; gap: 12px; }
+    .appbar-left { font-size: 13px; color: var(--muted); }
+    .appbar-left strong { color: var(--text); font-weight: 550; }
+    .appbar .build { font-size: 11px; padding: 4px 7px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); }
+    .appbar .mobile-home { display: none; }
+    .local-label { font-size: 12px; color: var(--muted); }
+    main { max-width: 1470px; margin: 0 auto; padding: 28px 32px 48px; }
+    .workspace-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; }
+    .workspace-head p { font-size: 12px; margin-top: 5px; color: var(--muted); }
+    .workspace-tag { display: inline-flex; gap: 7px; align-items: center; color: var(--cyan); font-size: 12px; }
+    .workspace-tag .icon { width: 16px; height: 16px; }
+    .grid { display: grid; grid-template-columns: minmax(300px, 355px) minmax(0, 1fr); gap: 32px; align-items: start; }
+    .control-panel { min-width: 0; border-right: 1px solid var(--line); padding-right: 28px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-head h2 { font-size: 13px; }
+    .section-head .icon-button { width: 32px; height: 32px; min-height: 32px; flex-basis: 32px; }
+    .field { min-width: 0; margin-bottom: 14px; }
+    .field-head { display: flex; align-items: center; justify-content: space-between; min-height: 29px; margin-bottom: 5px; }
+    label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 7px; }
+    .field-head label { margin: 0; }
+    select, input[type="number"], textarea { width: 100%; border: 1px solid var(--line); background: var(--field); color: var(--text); padding: 11px 12px; outline-offset: 2px; }
+    select { min-height: 44px; padding-right: 24px; }
+    input[type="number"] { min-height: 44px; font-variant-numeric: tabular-nums; }
+    textarea { resize: vertical; font-size: 15px; line-height: 1.7; }
+    .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+    .mood-row { grid-template-columns: minmax(0, 1fr) 95px; }
+    .lock { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 29px; cursor: pointer; position: relative; color: #969fa2; }
+    .lock input { position: absolute; width: 100%; height: 100%; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+    .lock .icon { width: 15px; height: 15px; pointer-events: none; }
+    .lock:has(input:checked) { color: var(--accent); background: #2a3120; border-radius: 4px; }
+    .lock:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+    details { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 2px; }
+    summary { min-height: 50px; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 550; cursor: pointer; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; font-size: 17px; font-weight: 400; color: var(--muted); }
+    details[open] > summary::after { content: "-"; }
+    .detail-meta { font-size: 11px; color: var(--muted); margin-left: auto; font-weight: 400; }
+    .detail-body { padding: 3px 0 5px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    button.chip { min-height: 32px; font-size: 11px; font-weight: 450; padding: 6px 9px; background: var(--field); color: var(--muted); border: 1px solid var(--line); }
+    button.chip.active { color: var(--text); background: #30362a; border-color: #6f8144; }
+    .identity-switch { display: flex; align-items: center; gap: 8px; margin: 17px 0 2px; font-size: 12px; }
+    input[type="checkbox"] { accent-color: var(--accent); }
+    .arrangement { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0 7px; }
+    .arrangement span { border-left: 2px solid #646d70; background: var(--field); font-size: 10px; padding: 5px 7px; color: var(--muted); }
+    .arrangement .verse { color: var(--cyan); border-color: var(--cyan); }
+    .arrangement .hook { color: var(--accent); border-color: #98b647; }
+    .control-actions { display: grid; grid-template-columns: 1fr 42px; gap: 9px; margin-top: 20px; }
+    .output-panel { min-width: 0; position: sticky; top: 24px; }
+    .output-tabs { display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
+    .output-tab { min-height: 40px; padding: 0 0 12px; color: var(--muted); background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0; font-size: 13px; }
+    .output-tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+    .output-tabs .minimal-toggle { margin-left: auto; margin-bottom: 10px; }
+    .minimal-toggle { background: transparent; color: var(--muted); padding: 4px 0; font-size: 11px; min-height: 30px; }
+    .toggle-track { width: 28px; height: 16px; border-radius: 10px; background: #43494b; display: inline-flex; padding: 3px; }
+    .toggle-track::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #d0d5d6; transition: transform .15s ease; }
+    .minimal-toggle[aria-checked="true"] { color: var(--accent); }
+    .minimal-toggle[aria-checked="true"] .toggle-track { background: var(--accent); }
+    .minimal-toggle[aria-checked="true"] .toggle-track::before { background: #273000; transform: translateX(12px); }
+    .prompt-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 11px; }
+    .prompt-head label { margin: 0; font-size: 11px; }
+    .count { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .count.over-limit { color: var(--danger); }
+    .prompt-editor { border: 1px solid #3d4345; border-radius: 8px; background: var(--field); overflow: hidden; }
+    .prompt-editor:focus-within { border-color: #94a866; }
+    #prompt { display: block; min-height: 310px; border: 0; border-radius: 0; background: transparent; padding: 22px; outline: none; font-size: 15px; line-height: 1.85; }
+    .editor-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); }
+    .editor-meta { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
+    .editor-meta .icon { width: 14px; height: 14px; color: var(--cyan); }
+    .editor-actions { display: flex; gap: 7px; }
+    #copy { min-width: 105px; font-size: 12px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .actions button { font-size: 12px; }
+    .output-actions { align-items: center; }
+    .quality { margin-top: 10px; font-size: 11px; color: var(--muted); }
+    .quality:empty { display: none; }
+    .quality.warning { color: var(--danger); }
+    .bank { color: var(--muted); font-size: 12px; line-height: 1.8; }
+    .bank strong { color: #d4dada; font-weight: 500; }
+    #blocked { color: var(--muted); font-size: 11px; margin-bottom: 10px; }
+    #methodNote { color: #c6d0d1; font-size: 12px; line-height: 1.7; margin-bottom: 12px; padding-left: 12px; border-left: 2px solid var(--cyan); }
+    .ab-control { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; margin-bottom: 14px; }
+    .ab-control .field { margin: 0; }
+    .variant-list { display: grid; gap: 12px; margin-top: 18px; }
+    .variant-card { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--field); }
+    .small-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; font-size: 11px; color: var(--muted); }
+    .small-head strong { color: var(--text); font-size: 12px; font-weight: 550; overflow-wrap: anywhere; }
+    .small-head span { white-space: nowrap; }
+    .variant-card textarea { margin-top: 10px; border: 0; padding: 0; min-height: 125px; line-height: 1.65; background: transparent; font-size: 13px; }
+    .variant-card .actions { justify-content: flex-end; margin-top: 8px; }
+    .empty-state { display: grid; justify-items: start; align-content: center; min-height: 180px; padding: 24px 0; color: var(--muted); gap: 10px; }
+    .empty-state .icon { width: 26px; height: 26px; color: #788083; }
+    .empty-state strong { color: #d7dddf; font-size: 14px; font-weight: 500; }
+    .empty-state p { font-size: 12px; }
+    #saved { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; }
+    #saved > .empty-state { grid-column: 1 / -1; }
+    .status { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 30; max-width: min(600px, calc(100% - 32px)); padding: 11px 16px; background: #252a2c; border: 1px solid #586467; border-radius: 8px; box-shadow: 0 5px 24px #0006; font-size: 12px; pointer-events: none; }
+    .status:empty { display: none; }
+    .status.good { border-color: #788c43; }
+    .status.warn { color: var(--danger); border-color: #9f5959; }
+    .mobile-switch, .mobile-dock { display: none; }
+    dialog { background: #202426; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 24px; max-width: min(540px, calc(100% - 32px)); width: 100%; }
+    dialog::backdrop { background: #000b; }
+    dialog textarea { margin-top: 16px; min-height: 240px; }
+    dialog p { font-size: 13px; margin-top: 8px; color: var(--muted); }
+    dialog .actions { justify-content: flex-end; }
+    @media (min-width: 1500px) {
+      .grid { grid-template-columns: 390px minmax(0, 1fr); gap: 40px; }
+      #prompt { min-height: 335px; }
     }
-
-    main {
-      width: min(1160px, calc(100vw - 28px));
-      margin: 0 auto;
-      padding: 24px 0 36px;
+    @media (max-width: 1190px) {
+      .sidebar { width: 198px; padding-inline: 12px; }
+      .app { margin-left: 198px; }
+      main { padding-inline: 24px; }
+      .appbar { padding-inline: 24px; }
+      .grid { grid-template-columns: 295px minmax(0, 1fr); gap: 22px; }
+      .control-panel { padding-right: 20px; }
+      .editor-meta { display: none; }
+      .editor-actions { width: 100%; justify-content: flex-end; }
     }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: end;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 18px;
-      margin-bottom: 18px;
+    @media (max-width: 980px) {
+      .sidebar { display: none; }
+      .app { margin-left: 0; }
+      .appbar .mobile-home { display: inline-flex; }
+      .grid { grid-template-columns: minmax(270px, 330px) minmax(0, 1fr); }
     }
-
-    h1 {
-      font-size: clamp(1.5rem, 3vw, 2.4rem);
-      line-height: 1;
-      margin: 0 0 8px;
-      letter-spacing: 0;
+    @media (max-width: 740px) {
+      .appbar { height: 62px; padding: 0 18px; }
+      .appbar-left { gap: 8px; font-size: 12px; }
+      .appbar-left .desktop-label, .local-label { display: none; }
+      main { padding: 23px 18px calc(105px + env(safe-area-inset-bottom)); }
+      h1 { font-size: 23px; }
+      .workspace-head { margin-bottom: 20px; align-items: start; }
+      .workspace-head p { font-size: 11px; }
+      .workspace-tag { font-size: 11px; padding-top: 5px; }
+      .grid { display: block; }
+      .control-panel { padding: 0; border: 0; }
+      .output-panel { position: static; }
+      .mobile-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--sidebar); margin-bottom: 24px; }
+      .mobile-switch button { background: transparent; color: var(--muted); min-height: 36px; font-size: 12px; }
+      .mobile-switch button[aria-pressed="true"] { color: var(--text); background: #32373a; }
+      body[data-mobile-pane="controls"] .output-panel { display: none; }
+      body[data-mobile-pane="output"] .control-panel { display: none; }
+      .field { margin-bottom: 16px; }
+      .field-head { min-height: 34px; }
+      .lock { height: 34px; width: 34px; }
+      select, input[type="number"], textarea, #prompt, .variant-card textarea { font-size: 16px; }
+      .row { gap: 12px; }
+      .mood-row { grid-template-columns: minmax(0, 1fr) 100px; }
+      .control-actions { display: none; }
+      .mobile-dock { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; padding: 12px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--bg); }
+      .mobile-dock button { min-height: 46px; font-size: 13px; }
+      body[data-view="saved"] .mobile-dock { display: none; }
+      body:has(#prompt:focus, #bpm:focus) .mobile-dock { display: none; }
+      .output-tabs { gap: 16px; }
+      .minimal-toggle { font-size: 11px; gap: 6px; }
+      #prompt { padding: 18px; min-height: 330px; line-height: 1.8; }
+      .editor-meta { display: flex; }
+      .editor-actions { width: auto; }
+      .editor-footer { padding-inline: 10px; }
+      #copy { min-width: 95px; }
+      .output-actions button { flex: 1; }
+      .status { bottom: calc(88px + env(safe-area-inset-bottom)); width: max-content; }
+      #saved { grid-template-columns: minmax(0, 1fr); }
+      .ab-control { grid-template-columns: minmax(0, 1fr); }
+      .workspace-head .export-label { display: none; }
+      button.chip { min-height: 38px; font-size: 12px; }
     }
-
-    h2 {
-      font-size: 1rem;
-      margin: 18px 0 10px;
-      letter-spacing: 0;
-    }
-
-    p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .key {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px 12px;
-      color: var(--accent);
-      white-space: nowrap;
-      font-size: .88rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 410px 1fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .panel {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-      padding: 16px;
-    }
-
-    label {
-      display: block;
-      color: var(--muted);
-      font-size: .82rem;
-      margin-bottom: 7px;
-    }
-
-    select, input, textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 7px;
-      background: #0f0f11;
-      color: var(--text);
-      padding: 10px 11px;
-      font: inherit;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 180px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .field { margin-bottom: 13px; }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .locks {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .lock, .switch {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      border: 1px solid var(--line);
-      border-radius: 7px;
-      background: var(--panel2);
-      color: var(--muted);
-      padding: 9px;
-      margin: 0;
-      font-size: .82rem;
-      cursor: pointer;
-    }
-
-    .lock input, .switch input {
-      width: auto;
-      margin: 0;
-      accent-color: var(--accent);
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .chip {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 7px 10px;
-      color: var(--muted);
-      background: var(--panel2);
-      font-size: .82rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .chip.active {
-      color: #111;
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 7px;
-      background: var(--accent);
-      color: #111;
-      padding: 10px 13px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .ab-control {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: end;
-      margin-top: 12px;
-    }
-
-    button.secondary {
-      background: #242428;
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
-
-    button.secondary.active {
-      background: var(--accent);
-      color: #111;
-      border-color: var(--accent);
-    }
-
-    button.danger {
-      background: transparent;
-      color: var(--danger);
-      border: 1px solid rgba(255, 105, 97, .55);
-    }
-
-    .formula {
-      display: grid;
-      gap: 9px;
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: .9rem;
-    }
-
-    .formula strong, .small-head strong { color: var(--text); }
-    .warning { color: var(--danger); }
-
-    .prompt-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 7px;
-    }
-
-    .prompt-head label { margin: 0; }
-
-    .count {
-      color: var(--accent);
-      font-size: .82rem;
-      white-space: nowrap;
-    }
-
-    .status {
-      min-height: 20px;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: .86rem;
-    }
-
-    .status.good { color: var(--accent); }
-    .status.warn { color: var(--danger); }
-
-    .variant-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .variant-card {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel2);
-      padding: 11px;
-    }
-
-    .variant-card textarea {
-      min-height: 112px;
-      margin-top: 8px;
-      background: #0b0b0c;
-    }
-
-    .small-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      color: var(--muted);
-      font-size: .84rem;
-    }
-
-    .bank {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel2);
-      padding: 10px;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: .86rem;
-    }
-
-    @media (max-width: 860px) {
-      header { display: block; }
-      .key { display: inline-block; margin-top: 14px; white-space: normal; }
-      .grid { grid-template-columns: 1fr; }
-      .row { grid-template-columns: 1fr; }
-      .ab-control { grid-template-columns: 1fr; }
-      .locks { grid-template-columns: repeat(2, 1fr); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before { transition: none !important; scroll-behavior: auto !important; }
     }
   </style>
 </head>
-<body>
-  <main>
-    <header>
-      <div>
-    <h1>Malnacidos Suno v6 Prompt Automator v17</h1>
-        <p>Generador minimalista para variar subgeneros sin perder el ADN.</p>
+<body data-mobile-pane="controls" data-view="studio">
+  <svg xmlns="http://www.w3.org/2000/svg" class="svg-defs" aria-hidden="true">
+    <!--
+    ISC License
+    
+    Copyright (c) 2026 Lucide Icons and Contributors
+    
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+    
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+    
+    ---
+    
+    The following Lucide icons are derived from the Feather project:
+    
+    airplay, alert-circle, alert-octagon, alert-triangle, aperture, arrow-down-circle, arrow-down-left, arrow-down-right, arrow-down, arrow-left-circle, arrow-left, arrow-right-circle, arrow-right, arrow-up-circle, arrow-up-left, arrow-up-right, arrow-up, at-sign, calendar, cast, check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-down, chevrons-left, chevrons-right, chevrons-up, circle, clipboard, clock, code, columns, command, compass, corner-down-left, corner-down-right, corner-left-down, corner-left-up, corner-right-down, corner-right-up, corner-up-left, corner-up-right, crosshair, database, divide-circle, divide-square, dollar-sign, download, external-link, feather, frown, hash, headphones, help-circle, info, italic, key, layout, life-buoy, link-2, link, loader, lock, log-in, log-out, maximize, meh, minimize, minimize-2, minus-circle, minus-square, minus, monitor, moon, more-horizontal, more-vertical, move, music, navigation-2, navigation, octagon, pause-circle, percent, plus-circle, plus-square, plus, power, radio, rss, search, server, share, shopping-bag, sidebar, smartphone, smile, square, table-2, tablet, target, terminal, trash-2, trash, triangle, tv, type, upload, x-circle, x-octagon, x-square, x, zoom-in, zoom-out
+    
+    The MIT License (MIT) (for the icons listed above)
+    
+    Copyright (c) 2013-present Cole Bemis
+    
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+    -->
+    <symbol id="i-audio" viewBox="0 0 24 24"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></symbol>
+  </svg>
+  <a href="#workspace" class="skip-link">Ir al generador</a>
+  <aside class="sidebar" aria-label="Malnacidos Music Lab">
+    <div class="brand">
+      <svg class="icon brand-mark" aria-hidden="true"><use href="#i-audio"/></svg>
+      <div><strong>MALNACIDOS</strong><small>Music Lab / 2.0</small></div>
+    </div>
+    <nav class="main-nav" aria-label="Principal">
+      <button class="nav-button" id="navStudio" aria-current="page" onclick="switchView('studio')"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>Crear prompt</button>
+      <button class="nav-button" id="navSaved" onclick="switchView('saved')"><svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg>Ganadores <span class="badge" data-saved-count>0</span></button>
+    </nav>
+    <div class="library-nav">
+      <div class="nav-label">Subgeneros <span>13</span></div>
+      <label class="genre-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input id="genreSearch" type="search" aria-label="Buscar subgenero" placeholder="Buscar..." autocomplete="off"></label>
+      <nav id="genreLinks" class="genre-links" aria-label="Subgeneros"></nav>
+      <p id="genreEmpty" class="no-results" hidden>Sin coincidencias.</p>
+    </div>
+    <footer class="sidebar-footer"><strong>FORMULA MALNACIDOS V6 BUENA</strong>Build v22 &middot; HTML independiente</footer>
+  </aside>
+  <div class="app">
+    <header class="appbar">
+      <div class="appbar-left"><strong>Music Lab</strong><span class="desktop-label">/ Prompt Automator</span><span class="build">v22</span></div>
+      <div class="appbar-right">
+        <span class="local-label">Solo este navegador</span>
+        <button class="quiet icon-button mobile-home" title="Crear prompt" aria-label="Crear prompt" onclick="switchView('studio')"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></button>
+        <button class="quiet icon-button" title="Ganadores guardados" aria-label="Ganadores guardados" onclick="switchView('saved')"><svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg></button>
       </div>
-      <div class="key">FORMULA MALNACIDOS V6 BUENA</div>
     </header>
-
-    <section class="grid">
-      <div class="panel">
-        <div class="field">
-          <label for="genre">Subgenero</label>
-          <select id="genre" onchange="loadGenre()">
-            <option>Rap Underground</option>
-            <option>Rap Congalero</option>
-            <option>Trap</option>
-            <option>Drill</option>
-            <option>Bangers</option>
-            <option>Reggaeton</option>
-            <option>G-Funk</option>
-            <option>Boom Bap</option>
-            <option>Conscious / Street Rap</option>
-            <option>R&B</option>
-            <option>Corridos Tumbados Beat</option>
-            <option>Corridos Tumbados Requinto</option>
-          </select>
+    <main id="workspace">
+      <section id="studioView" aria-labelledby="studioTitle">
+        <div class="workspace-head">
+          <div><h1 id="studioTitle">Crear prompt</h1><p id="activeSummary">Rap Underground / Base A</p></div>
+          <span class="workspace-tag"><svg class="icon" aria-hidden="true"><use href="#i-audio"/></svg>Suno v6</span>
         </div>
-
-        <div class="row">
-          <div class="field">
-            <label for="preset">Preset oficial</label>
-          <select id="preset" onchange="applyPreset()">
-              <option>Base A</option>
-              <option>Base B</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="intensity">Intensidad de variacion</label>
-            <select id="intensity">
-              <option value="1">Suave - 1 cambio</option>
-              <option value="2" selected>Media - 2 cambios</option>
-              <option value="3">Pesada - 3 cambios</option>
-            </select>
-          </div>
+        <div class="mobile-switch" aria-label="Panel">
+          <button id="mobileControls" aria-pressed="true" onclick="setMobilePane('controls')"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>Sonido</button>
+          <button id="mobileOutput" aria-pressed="false" onclick="setMobilePane('output')"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>Prompt</button>
         </div>
-
-        <div class="row">
-          <div class="field">
-            <label for="mood">Mood</label>
-            <select id="mood">
-              <option>oscuro</option>
-              <option>callejero</option>
-              <option>agresivo</option>
-              <option>serio</option>
-              <option>sensual crudo</option>
-              <option>triste pero callejero</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="bpm">BPM</label>
-            <input id="bpm" type="number" min="60" max="100" value="86">
-          </div>
+        <div class="grid">
+          <section class="control-panel" aria-label="Sonido y estructura">
+            <div class="section-head"><h2>Tu base</h2><button id="reset" class="quiet icon-button" title="Restaurar Base A" aria-label="Restaurar Base A" onclick="handleAction('reset', this)"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button></div>
+            <div class="field">
+              <label for="genre">Subgenero</label>
+              <select id="genre" onchange="loadGenre()">
+                <option>Rap Underground</option><option>Rap Congalero</option><option>Urban Electro Hybrid</option><option>Trap</option><option>Drill</option><option>Bangers</option><option>Reggaeton</option><option>G-Funk</option><option>Boom Bap</option><option>Conscious / Street Rap</option><option>R&amp;B</option><option>Corridos Tumbados Beat</option><option>Corridos Tumbados Requinto</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="field"><label for="preset">Preset oficial</label><select id="preset" onchange="applyPreset()"><option>Base A</option><option>Base B</option></select></div>
+              <div class="field"><label for="intensity">Cambios al variar</label><select id="intensity"><option value="1">Suave / 1</option><option value="2" selected>Media / 2</option><option value="3">Alta / 3</option></select></div>
+            </div>
+            <div class="row mood-row">
+              <div class="field"><div class="field-head"><label for="mood">Mood</label><label class="lock" title="Fijar mood al variar"><input id="lockMood" type="checkbox" aria-label="Fijar mood"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><select id="mood"><option>oscuro</option></select></div>
+              <div class="field"><div class="field-head"><label for="bpm">BPM</label><label class="lock" title="Fijar BPM al variar"><input id="lockBpm" type="checkbox" aria-label="Fijar BPM"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><input id="bpm" type="number" min="40" max="240" step="1" value="86" inputmode="numeric"></div>
+            </div>
+            <div class="field"><div class="field-head"><label for="era">Era / sabor</label><label class="lock" title="Fijar era al variar"><input id="lockEra" type="checkbox" aria-label="Fijar era"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><select id="era"><option>hibrido Malnacidos crudo</option></select></div>
+            <details open id="instrumentsSection">
+              <summary>Instrumentos <span class="detail-meta">Drums, bajo y melodia</span></summary>
+              <div class="detail-body">
+                <div class="field" id="drumsField"><div class="field-head"><label for="drums">Drums / ritmo</label><label class="lock" id="lockDrumsWrap" title="Fijar drums al variar"><input id="lockDrums" type="checkbox" aria-label="Fijar drums"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><select id="drums"><option>drums secos y pesados</option></select></div>
+                <div class="field"><div class="field-head"><label for="bass">Bajo</label><label class="lock" title="Fijar bajo al variar"><input id="lockBass" type="checkbox" aria-label="Fijar bajo"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><select id="bass"><option>bajo oscuro</option></select></div>
+                <div class="field"><div class="field-head"><label for="lead">Instrumento principal</label><label class="lock" title="Fijar instrumento al variar"><input id="lockLead" type="checkbox" aria-label="Fijar instrumento"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><select id="lead"><option>loop terco</option></select></div>
+                <div class="field"><div class="field-head"><label for="accent">Acento / adorno</label><label class="lock" title="Fijar acento al variar"><input id="lockAccent" type="checkbox" aria-label="Fijar acento"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><select id="accent"><option>scratch cuts secos</option></select></div>
+              </div>
+            </details>
+            <details id="structureSection">
+              <summary>Estructura <span class="detail-meta" id="structureMeta">Cancion</span></summary>
+              <div class="detail-body">
+                <div class="field"><label for="structure">Arreglo</label><select id="structure">
+                  <option value="intro, verse, hook, verse, hook, bridge, outro">Verso primero</option>
+                  <option value="intro, hook, verse, hook, verse, bridge, outro">Coro primero</option>
+                  <option value="intro, hook, 24-bar verse, hook, 24-bar verse, bridge, final hook, outro">24 barras / Coro primero</option>
+                  <option value="intro, 24-bar verse, hook, 24-bar verse, hook, short breakdown, final hook, outro">24 barras / Verso primero + breakdown</option>
+                  <option value="intro, verse, hook, verse, hook, outro">Dos versos / Sin puente</option>
+                  <option value="intro, verse, verse, hook, bridge, hook, outro">Versos seguidos</option>
+                  <option value="cypher: intro, long verse, rapper switch, long verse, short break, outro">Cypher / Cambio de MC</option>
+                  <option value="cypher: intro, 32-bar verse, 32-bar verse, beat drop, 32-bar verse, outro">Cypher / Tres versos de 32 barras</option>
+                </select></div>
+                <div id="arrangement" class="arrangement" aria-label="Orden del arreglo"></div>
+              </div>
+            </details>
+            <details id="texturesSection">
+              <summary>Texturas e identidad <span class="detail-meta" id="textureCount">2 texturas</span></summary>
+              <div class="detail-body">
+                <div class="field-head"><span class="muted">Textura extra</span><label class="lock" title="Fijar texturas al variar"><input id="lockTextures" type="checkbox" aria-label="Fijar texturas"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div>
+                <div class="chips" id="textures"></div>
+                <label class="identity-switch"><input id="lessAmerican" type="checkbox" checked>Modo menos gringo</label>
+              </div>
+            </details>
+            <div class="control-actions">
+              <button id="generate" onclick="handleAction('generate', this)">Generar prompt<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+              <button class="secondary icon-button" title="Variacion controlada" aria-label="Variacion controlada" onclick="handleAction('variant', this)"><svg class="icon" aria-hidden="true"><use href="#i-shuffle"/></svg></button>
+            </div>
+          </section>
+          <section class="output-panel" aria-label="Resultado">
+            <div class="output-tabs">
+              <div role="tablist" aria-label="Resultados" style="display:contents">
+                <button class="output-tab" id="tabPrompt" role="tab" aria-selected="true" aria-controls="promptPane" onclick="switchOutput('prompt')">Prompt</button>
+                <button class="output-tab" id="tabVariants" role="tab" aria-selected="false" aria-controls="variantsPane" tabindex="-1" onclick="switchOutput('variants')">Variantes <span class="badge" id="variantCount">0</span></button>
+              </div>
+              <button id="minimal" class="minimal-toggle" role="switch" aria-checked="false" onclick="handleAction('minimal', this)"><span class="toggle-track" aria-hidden="true"></span>Minimalista</button>
+            </div>
+            <div id="promptPane" role="tabpanel" aria-labelledby="tabPrompt">
+              <div class="prompt-head"><label for="prompt">Styles / Prompt</label><span class="count" id="charCount">0 / 1000</span></div>
+              <div class="prompt-editor">
+                <textarea id="prompt" spellcheck="false" aria-describedby="quality charCount">Rap under de barrio.</textarea>
+                <div class="editor-footer">
+                  <span class="editor-meta"><svg class="icon" aria-hidden="true"><use href="#i-audio"/></svg>Instrumental</span>
+                  <div class="editor-actions">
+                    <button id="save" class="quiet icon-button" title="Guardar ganador" aria-label="Guardar ganador" onclick="handleAction('save', this)"><svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg></button>
+                    <button id="copy" onclick="handleAction('copy', this)"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg><span>Copiar</span></button>
+                  </div>
+                </div>
+              </div>
+              <div id="quality" class="quality" aria-live="polite"></div>
+              <div class="actions output-actions">
+                <button id="variant" class="secondary" onclick="handleAction('variant', this)"><svg class="icon" aria-hidden="true"><use href="#i-shuffle"/></svg>Variar</button>
+                <button id="four" class="secondary" onclick="handleAction('four', this)"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>4 variantes</button>
+              </div>
+              <details id="branchNotes"><summary>Banco y notas de la rama</summary><div class="detail-body"><p id="methodNote" hidden></p><p id="blocked"></p><div id="bank" class="bank"></div></div></details>
+            </div>
+            <div id="variantsPane" role="tabpanel" aria-labelledby="tabVariants" hidden>
+              <div class="ab-control"><div class="field"><label for="abTarget">Comparacion exacta A/B</label><select id="abTarget">
+                <option value="drums" id="abDrumsOption">Solo drums</option><option value="bass">Solo bajo</option><option value="lead">Solo instrumento</option><option value="accent">Solo acento</option><option value="era">Solo era</option><option value="bpm">Solo BPM</option><option value="structure">Solo estructura</option><option value="textures">Solo texturas</option><option value="drumsBass" id="abDrumsBassOption">Drums + bajo</option><option value="leadAccent">Instrumento + acento</option>
+              </select></div><button class="secondary" id="ab" onclick="handleAction('ab', this)">Comparar A/B</button></div>
+              <div class="actions"><button class="secondary" onclick="handleAction('four', this)"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>4 variantes</button><button id="copyAll" class="quiet" disabled onclick="handleAction('copyAll', this)"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>Copiar todas</button></div>
+              <div class="variant-list" id="variants"><div class="empty-state"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg><strong>Todavia no hay variantes.</strong></div></div>
+            </div>
+          </section>
         </div>
-
-        <div class="field">
-          <label for="era">Era / sabor</label>
-          <select id="era">
-            <option>hibrido Malnacidos crudo</option>
-            <option>clasico casete noventero</option>
-            <option>moderno under seco</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Candados para variar controlado</label>
-          <div class="locks">
-            <label class="lock"><input id="lockMood" type="checkbox"> Mood</label>
-            <label class="lock"><input id="lockBpm" type="checkbox"> BPM</label>
-            <label class="lock"><input id="lockEra" type="checkbox"> Era</label>
-            <label class="lock" id="lockDrumsWrap"><input id="lockDrums" type="checkbox"> Drums</label>
-            <label class="lock"><input id="lockBass" type="checkbox"> Bajo</label>
-            <label class="lock"><input id="lockLead" type="checkbox"> Instrumento</label>
-            <label class="lock"><input id="lockAccent" type="checkbox"> Acento</label>
-            <label class="lock"><input id="lockTextures" type="checkbox"> Texturas</label>
-          </div>
-        </div>
-
-        <div class="field" id="drumsField">
-          <label for="drums">Drums / ritmo</label>
-          <select id="drums">
-            <option>drums secos y pesados</option>
-            <option>bateria humana seca</option>
-            <option>drums con swing flojo</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="bass">Bajo</label>
-          <select id="bass">
-            <option>bajo oscuro</option>
-            <option>bajo simple y pesado</option>
-            <option>bajo profundo</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="lead">Instrumento principal</label>
-          <select id="lead">
-            <option>loop terco</option>
-            <option>loop oscuro repetitivo</option>
-            <option>piano minimo oscuro</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="accent">Acento / adorno</label>
-          <select id="accent">
-            <option>scratch cuts secos</option>
-            <option>vinyl stab</option>
-            <option>drop seco</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="structure">Estructura</label>
-          <select id="structure">
-            <option>intro, verse, hook, verse, hook, bridge, outro</option>
-            <option>intro, hook, verse, hook, verse, bridge, outro</option>
-            <option>intro, verse, hook, verse, hook, outro</option>
-            <option>intro, verse, verse, hook, bridge, hook, outro</option>
-            <option>cypher: intro, long verse, rapper switch, long verse, short break, outro</option>
-            <option>cypher: intro, 32-bar verse, 32-bar verse, beat drop, 32-bar verse, outro</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Textura extra</label>
-          <div class="chips" id="textures"></div>
-        </div>
-
-        <div class="field">
-          <label class="switch"><input id="lessAmerican" type="checkbox" checked> Modo menos gringo</label>
-        </div>
-
-        <div class="actions">
-          <button type="button" id="generate" onclick="handleAction('generate', this)">Generar prompt</button>
-          <button type="button" class="secondary" id="reset" onclick="handleAction('reset', this)">Reset base</button>
-        </div>
-
-        <div class="formula">
-          <div><strong>Regla:</strong> cambia solo 1 o 2 variables por tirada.</div>
-          <div><strong>Estructura fija:</strong> full 3-minute instrumental.</div>
-          <div><strong>Minimalista:</strong> deja lo esencial y corta adorno sobrante.</div>
-          <div class="warning" id="blocked"></div>
-          <div class="bank" id="bank"></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="field">
-          <div class="prompt-head">
-            <label for="prompt">Prompt listo para Suno</label>
-            <span class="count" id="charCount">0 chars</span>
-          </div>
-          <textarea id="prompt" spellcheck="false">Rap under de barrio, oscuro, hibrido Malnacidos crudo, drums secos y pesados, bajo oscuro, loop terco, scratch cuts secos, pocos sonidos, mucho espacio para rap, 86 BPM. Full 3-minute instrumental. Arrangement: intro, verse, hook, verse, hook, bridge, outro. No vocals, no trap, no EDM, no pop.</textarea>
-          <div class="formula">
-            <div class="warning" id="quality"></div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button type="button" id="copy" onclick="handleAction('copy', this)">Copiar</button>
-          <button type="button" class="secondary" id="minimal" onclick="handleAction('minimal', this)">Minimalista</button>
-          <button type="button" class="secondary" id="variant" onclick="handleAction('variant', this)">Variacion controlada</button>
-          <button type="button" class="secondary" id="four" onclick="handleAction('four', this)">4 variantes</button>
-          <button type="button" class="secondary" id="copyAll" onclick="handleAction('copyAll', this)">Copiar variantes</button>
-          <button type="button" class="secondary" id="save" onclick="handleAction('save', this)">Guardar ganador</button>
-          <button type="button" class="secondary" id="exportSaved" onclick="handleAction('exportSaved', this)">Exportar ganadores .txt</button>
-        </div>
-
-        <div class="ab-control">
-          <div>
-            <label for="abTarget">Prueba exacta A/B</label>
-            <select id="abTarget">
-              <option value="drums" id="abDrumsOption">Solo drums</option>
-              <option value="bass">Solo bajo</option>
-              <option value="lead">Solo instrumento</option>
-              <option value="accent">Solo acento</option>
-              <option value="era">Solo era</option>
-              <option value="bpm">Solo BPM</option>
-              <option value="structure">Solo estructura</option>
-              <option value="textures">Solo texturas</option>
-              <option value="drumsBass" id="abDrumsBassOption">Drums + bajo</option>
-              <option value="leadAccent">Instrumento + acento</option>
-            </select>
-          </div>
-          <button type="button" class="secondary" id="ab" onclick="handleAction('ab', this)">Generar A/B</button>
-        </div>
-
-        <div class="status" id="status"></div>
-
-        <h2>Variantes</h2>
-        <div class="variant-list" id="variants"></div>
-
-        <h2>Ganadores guardados</h2>
-        <div class="variant-list" id="saved"></div>
-      </div>
-    </section>
-  </main>
+      </section>
+      <section id="savedView" aria-labelledby="savedTitle" hidden>
+        <div class="workspace-head"><div><h1 id="savedTitle">Ganadores</h1><p><span data-saved-count>0</span> guardados en este navegador</p></div><button id="exportSaved" class="secondary" title="Exportar ganadores TXT" onclick="handleAction('exportSaved', this)"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span class="export-label">Exportar TXT</span></button></div>
+        <div id="saved" class="variant-list"></div>
+      </section>
+    </main>
+  </div>
+  <div class="mobile-dock"><button onclick="handleAction('generate', this)">Generar<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button><button class="secondary" onclick="handleAction('copy', this)"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>Copiar prompt</button></div>
+  <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
+  <dialog id="copyDialog" aria-labelledby="copyDialogTitle"><h2 id="copyDialogTitle">Copiar texto</h2><p>El navegador bloqueo la copia automatica. Selecciona el texto y usa Copiar.</p><textarea id="manualCopy" aria-label="Texto para copiar" readonly></textarea><div class="actions"><button class="secondary" onclick="document.getElementById('manualCopy').select()">Seleccionar todo</button><button onclick="document.getElementById('copyDialog').close()">Cerrar</button></div></dialog>
+  <dialog id="deleteDialog" aria-labelledby="deleteDialogTitle"><h2 id="deleteDialogTitle">Borrar ganador</h2><p>Este prompt se eliminara de los ganadores guardados.</p><div class="actions"><button class="secondary" onclick="document.getElementById('deleteDialog').close()">Cancelar</button><button id="confirmDelete" class="danger">Borrar</button></div></dialog>
+  <noscript><p style="padding:20px">Este navegador necesita JavaScript activado para generar prompts.</p></noscript>
 
   <script>
     const data = {
@@ -526,21 +463,40 @@
         ]
       },
       "Rap Congalero": {
-        bpm: 96,
-        bpms: [90, 94, 96, 98, 100, 104],
-        moods: ["congalero", "fiestero sucio", "callejero", "perreo rapero", "alegre malandro", "antre de barrio"],
-        era: ["rap mexicano congalero", "electro rap callejero", "hibrido Malnacidos party sucio"],
-        base: "Rap congalero mexicano",
-        drums: ["drums con bounce de antro", "kick seco y clap callejero", "snare seca con swing", "percusion sencilla de fiesta", "drums pesados sin rolls", "ritmo rapero para bailar"],
-        bass: ["808 corto y rebotado", "sub bass de antro", "bajo simple y pesado", "bassline juguetona oscura", "low end gordo", "bajo con rebote seco"],
-        lead: ["synth pluck de barrio", "lead electro rasposo", "organ stab seco", "bell callejero simple", "riff de synth pegajoso", "piano seco de fiesta"],
-        accent: ["drop para hook", "sirenazo corto", "vocal chop sin voz clara", "silencio antes del coro", "fill de percusion corto", "stutter seco de synth"],
-        extras: ["para perrear y rapear", "hook instrumental pegajoso", "fiesta de barrio", "pocas capas", "mezcla seca y fuerte", "energia de teibol sin sonar pop"],
-        bans: ["no corridos", "no guitarras tumbadas", "no banda", "no trumpet", "no EDM festival", "no boom bap polvoso", "no lo-fi chill", "no trap hi-hat overload"],
-        lessAmericanBans: ["no club rap gringo", "no radio pop", "no tropical house", "no glossy commercial sound"],
+        bpm: 95,
+        bpms: [92, 94, 95, 96, 98, 100],
+        moods: ["puercote", "teibolero", "congalero", "guapachoso", "callejero fiestero", "malandro alegre"],
+        era: ["rap puercote mexicano", "electro-cumbia callejera", "technolandro crudo", "hibrido Malnacidos guapachoso"],
+        base: "Rap puercote mexicano",
+        drums: ["ritmo electro-cumbia rapero", "caja seca y clap de fiesta", "bateria programada con swing guapachoso", "kick seco con palmada", "percusion de teibol sencilla", "tambor seco de barrio"],
+        bass: ["bajo sonidero simple", "bajo gordo de teclado", "linea de bajo cumbiera repetitiva", "sub bajo redondo sin slides", "bajo seco rebotado", "grave de fiesta callejera"],
+        lead: ["teclado barato de cumbia", "organo sintetico de baile de barrio", "melodia guapachosa de teclado", "riff electro rasposo", "lead sonidero sencillo", "teclado malandro repetitivo"],
+        accent: ["golpes de teclado", "silencio antes del coro", "fill de palmadas corto", "sirena barata discreta", "breakdown de percusion y bajo", "respuesta de teclado corta"],
+        extras: ["rap de teibol", "sabor sonidero", "vulgar pero callejero", "fiesta de barrio", "minimalista con swing", "para rapear y bailar"],
+        bans: ["no trap", "no drill", "no boom bap", "no reggaeton moderno", "no corridos", "no guitarras tumbadas", "no banda", "no trumpet", "no EDM festival", "no pop", "no lo-fi chill"],
+        lessAmericanBans: ["no sonido gringo comercial", "no brillo comercial", "no R&B", "no smooth jazz"],
         presets: [
-          { name: "Base A", mood: "congalero", bpm: 96, era: "hibrido Malnacidos party sucio", drums: "drums con bounce de antro", bass: "808 corto y rebotado", lead: "synth pluck de barrio", accent: "drop para hook", textures: ["para perrear y rapear", "hook instrumental pegajoso"] },
-          { name: "Base B", mood: "fiestero sucio", bpm: 100, era: "electro rap callejero", drums: "kick seco y clap callejero", bass: "sub bass de antro", lead: "lead electro rasposo", accent: "sirenazo corto", textures: ["fiesta de barrio", "mezcla seca y fuerte"] }
+          { name: "Base A", mood: "puercote", bpm: 95, era: "rap puercote mexicano", drums: "ritmo electro-cumbia rapero", bass: "bajo sonidero simple", lead: "teclado barato de cumbia", accent: "golpes de teclado", textures: ["rap de teibol", "sabor sonidero"] },
+          { name: "Base B", mood: "guapachoso", bpm: 96, era: "technolandro crudo", drums: "caja seca y clap de fiesta", bass: "bajo gordo de teclado", lead: "organo sintetico de baile de barrio", accent: "breakdown de percusion y bajo", textures: ["fiesta de barrio", "minimalista con swing"] }
+        ]
+      },
+      "Urban Electro Hybrid": {
+        bpm: 90,
+        bpms: [90, 92],
+        moods: ["seco", "agresivo", "callejero", "pesado", "nocturno"],
+        era: ["esqueleto electro limpio", "remake urbano pesado", "hibrido Malnacidos 90"],
+        base: "Commercial urban electronic rap beat",
+        drums: ["hard dry kick", "tight electro bounce", "sharp claps", "low simple hats", "stop-start drum pockets", "dry club knock"],
+        bass: ["short 808 hits", "one-note bass pulse", "short sub hits", "tight low end", "808 stabs", "heavy bass pulse"],
+        lead: ["simple two-note synth hook", "dry synth stab", "low synth hit", "minimal square pluck", "short synth response", "one-note hook motif"],
+        accent: ["vacio (sin adorno)", "short breakdown", "stop-start pause", "hook drop", "dry impact hit", "low synth answer"],
+        extras: ["heavy vocal space", "minimal arrangement", "rowdy night energy", "chant hook space", "few sounds", "clean skeleton"],
+        bans: ["no boom bap", "no reggaeton", "no cumbia", "no latin percussion", "no EDM drop", "no techno lead", "no full house track", "no trap hi-hat rolls", "no guitars", "no arabic", "no middle eastern", "no oriental scale"],
+        lessAmericanBans: ["no glossy pop", "no radio pop", "no bright party synth"],
+        method: "Metodo recomendado: primero genera un esqueleto electro limpio. Luego usa remix/remake con audio reference para volverlo mas urbano. Si sale rapido, baja Speed con Keep Pitch ON hasta 90-92 BPM. No copies esta nota en Suno.",
+        presets: [
+          { name: "Base A", mood: "pesado", bpm: 90, era: "hibrido Malnacidos 90", drums: "hard dry kick", bass: "short 808 hits", lead: "simple two-note synth hook", accent: "stop-start pause", textures: ["heavy vocal space", "minimal arrangement"] },
+          { name: "Base B", mood: "agresivo", bpm: 92, era: "remake urbano pesado", drums: "tight electro bounce", bass: "one-note bass pulse", lead: "dry synth stab", accent: "short breakdown", textures: ["rowdy night energy", "chant hook space"] }
         ]
       },
       "Trap": {
@@ -754,8 +710,12 @@
       const requintoOnly = $("genre").value === "Corridos Tumbados Requinto";
       $("drumsField").style.display = requintoOnly ? "none" : "";
       $("lockDrumsWrap").style.display = requintoOnly ? "none" : "";
+      $("drums").disabled = requintoOnly;
+      $("lockDrums").disabled = requintoOnly;
       $("abDrumsOption").hidden = requintoOnly;
       $("abDrumsBassOption").hidden = requintoOnly;
+      $("abDrumsOption").disabled = requintoOnly;
+      $("abDrumsBassOption").disabled = requintoOnly;
       if (requintoOnly && ["drums", "drumsBass"].includes($("abTarget").value)) {
         $("abTarget").value = "lead";
       }
@@ -784,20 +744,25 @@
 
     function setSelectedTextures(values) {
       document.querySelectorAll(".chip").forEach((chip) => {
-        chip.classList.toggle("active", values.includes(chip.dataset.value));
+        const selected = values.includes(chip.dataset.value);
+        chip.classList.toggle("active", selected);
+        chip.setAttribute("aria-pressed", String(selected));
       });
     }
 
     function renderTextureChips(values, activeValues) {
-      $("textures").innerHTML = "";
+      $("textures").replaceChildren();
       values.forEach((texture) => {
-        const chip = document.createElement("span");
+        const chip = document.createElement("button");
+        chip.type = "button";
         chip.className = "chip";
         chip.dataset.value = texture;
         chip.textContent = texture;
         chip.classList.toggle("active", activeValues.includes(texture));
+        chip.setAttribute("aria-pressed", String(activeValues.includes(texture)));
         chip.addEventListener("click", () => {
           chip.classList.toggle("active");
+          chip.setAttribute("aria-pressed", String(chip.classList.contains("active")));
           renderPrompt();
         });
         $("textures").appendChild(chip);
@@ -817,8 +782,14 @@
     function compactEra(value) {
       return value
         .replace("hibrido Malnacidos crudo", "Malnacidos crudo")
+        .replace("hibrido Malnacidos 90", "Malnacidos 90")
+        .replace("remake urbano pesado", "urbano pesado")
+        .replace("esqueleto electro limpio", "electro limpio")
         .replace("hibrido Malnacidos party sucio", "Malnacidos party sucio")
         .replace("rap mexicano congalero", "mexicano congalero")
+        .replace("hibrido Malnacidos guapachoso", "Malnacidos guapachoso")
+        .replace("rap puercote mexicano", "rap puercote")
+        .replace("electro-cumbia callejera", "electro-cumbia")
         .replace("hibrido west coast callejero", "west coast callejero")
         .replace("hibrido raw actual", "raw actual")
         .replace("hibrido barras de calle", "barras de calle")
@@ -837,7 +808,7 @@
 
     function compactTextures(state, genre) {
       const pool = uniqueList([...state.textures, ...genre.extras]);
-      const priority = /espacio|pocos|minimal|crudo|calle|puro corrido|sin beat|requinto manda|groove/i;
+      const priority = /espacio|pocos|minimal|crudo|calle|puro corrido|sin beat|requinto manda|groove|teibol|sonidero|guapachoso|fiesta|swing/i;
       const picked = [];
       const firstPriority = pool.find((value) => priority.test(value));
       if (firstPriority) picked.push(firstPriority);
@@ -895,27 +866,28 @@
     }
 
     function updateCounts(text) {
-      $("charCount").textContent = `${text.length} chars`;
+      $("charCount").textContent = text.length + " / 1000";
+      $("charCount").classList.toggle("over-limit", text.length > 1000);
     }
 
     function updateQuality(state, prompt) {
       const notes = [];
-      if (prompt.length > 1000) notes.push("Ojo: ya pasa 1000 caracteres.");
-      if (minimalMode) notes.push("Minimalista activo.");
-      if (!minimalMode && prompt.length > 420) notes.push("Si Suno se distrae, prueba Minimalista.");
-      if (!state.lessAmerican) notes.push("Modo menos gringo apagado.");
-      if (state.genreName === "R&B" && !/bounce|slides|movimiento|moving/i.test(`${state.drums} ${state.bass}`)) {
-        notes.push("R&B puede caer chill si no trae bounce o bajo con movimiento.");
+      if (prompt.length > 1000) notes.push("Supera la referencia de 1000 caracteres.");
+      if (state.genreName === "R&B" && !/bounce|slides|movimiento|moving/i.test(state.drums + " " + state.bass)) {
+        notes.push("R&B: falta bounce o un bajo con movimiento.");
       }
       if (state.genreName === "Corridos Tumbados Requinto" && !/no drums/i.test(prompt)) {
-        notes.push("Requinto necesita bloqueo No drums.");
+        notes.push("El texto editado no incluye No drums.");
       }
       $("quality").textContent = notes.join(" ");
+      $("quality").classList.toggle("warning", notes.length > 0);
     }
 
     function renderBank() {
       const genre = getGenre();
       $("blocked").textContent = "Bloqueos: " + genre.bans.join(", ");
+      $("methodNote").textContent = genre.method || "";
+      $("methodNote").hidden = !genre.method;
       $("bank").innerHTML = [
         `<strong>Drums:</strong> ${genre.drums.join(" / ")}`,
         `<strong>Bajo:</strong> ${genre.bass.join(" / ")}`,
@@ -927,33 +899,50 @@
     }
 
     function renderPrompt() {
+      if (!validateBpm()) return;
       const state = captureState();
       const prompt = buildPrompt(state);
       $("prompt").value = prompt;
       updateCounts(prompt);
       updateQuality(state, prompt);
       renderBank();
+      updateStudioUI();
+      persistSession();
     }
 
     function updateMinimalButton() {
       $("minimal").classList.toggle("active", minimalMode);
-      $("minimal").textContent = minimalMode ? "Minimalista ON" : "Minimalista";
+      $("minimal").setAttribute("aria-checked", String(minimalMode));
     }
 
+    let statusTimer;
     function showStatus(message, tone = "") {
+      clearTimeout(statusTimer);
       $("status").textContent = message;
-      $("status").className = `status ${tone}`.trim();
+      $("status").className = ("status " + tone).trim();
+      statusTimer = setTimeout(() => { $("status").textContent = ""; }, 6000);
     }
 
+    const buttonFlashes = new WeakMap();
     function flashButton(button, text) {
       if (!button) return;
-      const original = button.textContent;
-      button.textContent = text;
-      setTimeout(() => button.textContent = original, 900);
+      const previous = buttonFlashes.get(button);
+      if (previous) {
+        clearTimeout(previous.timer);
+        button.innerHTML = previous.html;
+      }
+      const html = button.innerHTML;
+      if (!button.classList.contains("icon-button")) button.textContent = text;
+      const timer = setTimeout(() => {
+        button.innerHTML = html;
+        buttonFlashes.delete(button);
+      }, 1100);
+      buttonFlashes.set(button, { html, timer });
     }
 
     function loadGenre() {
       const genre = getGenre();
+      clearVariants();
       updateGenreControls();
       fillSelect($("preset"), genre.presets.map((preset) => preset.name), false);
       fillSelect($("mood"), genre.moods || defaultMoods, false);
@@ -990,7 +979,12 @@
     }
 
     function randomSubset(values, max) {
-      return [...values].sort(() => Math.random() - 0.5).slice(0, max);
+      const shuffled = [...values];
+      for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled.slice(0, max);
     }
 
     function cloneState(state) {
@@ -1042,10 +1036,10 @@
       return $(id).checked;
     }
 
-    function makeRandomState(seed) {
+    function makeRandomState(seed, fixedFields = {}) {
       const genre = data[seed.genreName];
-      const texturePool = uniqueList([...genre.extras, ...textureList]);
-      const state = { ...seed, textures: [...seed.textures] };
+      const texturePool = uniqueList([...genre.extras, ...textureList, ...seed.textures]);
+      const state = { ...seed, textures: [...seed.textures], ...fixedFields };
       const changes = [
         ["mood", "lockMood", () => randomDifferent(getMoodOptions(), seed.mood)],
         ["bpm", "lockBpm", () => randomDifferent(genre.bpms, seed.bpm)],
@@ -1053,14 +1047,26 @@
         ["drums", "lockDrums", () => randomDifferent(genre.drums, seed.drums)],
         ["bass", "lockBass", () => randomDifferent(genre.bass, seed.bass)],
         ["lead", "lockLead", () => randomDifferent(genre.lead, seed.lead)],
-        ["accent", "lockAccent", () => randomDifferent(genre.accent, seed.accent)],
-        ["textures", "lockTextures", () => randomSubset(texturePool, 2)]
-      ].filter(([, lockId]) => !lock(lockId));
-      const amount = Math.min(Number($("intensity").value || 2), changes.length);
-      randomSubset(changes, amount).forEach(([key, , makeValue]) => {
-        state[key] = makeValue();
-      });
+        ["accent", "lockAccent", () => randomDifferent(accentOptions(genre), seed.accent)],
+        ["textures", "lockTextures", () => {
+          const textures = randomSubset(texturePool, 2);
+          if (sameTextures(textures, seed.textures)) {
+            const alternative = texturePool.find((value) => !seed.textures.includes(value));
+            if (alternative) textures[0] = alternative;
+          }
+          return uniqueList(textures);
+        }]
+      ].filter(([key, lockId]) => !lock(lockId)
+        && !Object.prototype.hasOwnProperty.call(fixedFields, key)
+        && !(seed.genreName === "Corridos Tumbados Requinto" && key === "drums"));
+      const fixedCount = Object.keys(fixedFields).filter((key) => String(seed[key]) !== String(fixedFields[key])).length;
+      const amount = Math.min(Math.max(0, Number($("intensity").value || 2) - fixedCount), changes.length);
+      randomSubset(changes, amount).forEach(([key, , makeValue]) => { state[key] = makeValue(); });
       return state;
+    }
+
+    function sameTextures(a, b) {
+      return a.length === b.length && a.every((value) => b.includes(value));
     }
 
     function applyState(state) {
@@ -1088,9 +1094,7 @@
     }
 
     function makeEraVariant(seed, eraValue) {
-      const state = makeRandomState({ ...seed, era: eraValue });
-      state.era = eraValue;
-      return state;
+      return lock("lockEra") ? makeRandomState(seed) : makeRandomState(seed, { era: eraValue });
     }
 
     function makeExactAB() {
@@ -1124,46 +1128,43 @@
     }
 
     function createPromptCard(container, title, prompt, canDelete, index) {
-      const card = document.createElement("div");
+      const card = document.createElement("article");
       card.className = "variant-card";
-
       const head = document.createElement("div");
       head.className = "small-head";
-
       const label = document.createElement("strong");
       label.textContent = title;
-
       const count = document.createElement("span");
-      count.textContent = `${prompt.length} chars`;
-
+      count.textContent = prompt.length + " caracteres";
       head.append(label, count);
 
       const textarea = document.createElement("textarea");
       textarea.value = prompt;
       textarea.spellcheck = false;
+      textarea.readOnly = true;
+      textarea.setAttribute("aria-label", title);
 
       const actions = document.createElement("div");
       actions.className = "actions";
-
-      const copyButton = document.createElement("button");
-      copyButton.type = "button";
-      copyButton.className = "secondary";
-      copyButton.textContent = "Copiar";
-      copyButton.onclick = () => copyText(prompt, copyButton);
+      const copyButton = iconButton("copy", "Copiar prompt", () => copyText(textarea.value, copyButton));
       actions.appendChild(copyButton);
 
       if (canDelete) {
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.className = "danger";
-        deleteButton.textContent = "Borrar";
-        deleteButton.onclick = () => {
-          deleteSaved(index);
-          showStatus("Ganador borrado.", "good");
-        };
+        const deleteButton = iconButton("trash", "Borrar ganador", () => {
+          $("confirmDelete").onclick = () => {
+            const persistent = deleteSaved(index);
+            $("deleteDialog").close();
+            showStatus(persistent ? "Ganador borrado." : "Cambio solo en esta sesion; no se pudo actualizar el guardado.", persistent ? "good" : "warn");
+          };
+          $("deleteDialog").showModal();
+        });
+        deleteButton.classList.add("danger");
         actions.appendChild(deleteButton);
+      } else {
+        actions.appendChild(iconButton("bookmark", "Guardar esta variante", () => {
+          saveWinner({ title, prompt: textarea.value });
+        }));
       }
-
       card.append(head, textarea, actions);
       container.appendChild(card);
     }
@@ -1173,9 +1174,9 @@
       const eras = data[seed.genreName].era;
       const variants = [
         { title: "Base actual", state: seed },
-        { title: "Clasica", state: makeEraVariant(seed, eras[0]) },
-        { title: "Moderna", state: makeEraVariant(seed, eras[1]) },
-        { title: "Hibrida Malnacidos", state: makeEraVariant(seed, eras[2]) }
+        { title: lock("lockEra") ? "Variacion 1 / Era fija" : eras[0], state: makeEraVariant(seed, eras[0]) },
+        { title: lock("lockEra") ? "Variacion 2 / Era fija" : eras[1], state: makeEraVariant(seed, eras[1]) },
+        { title: lock("lockEra") ? "Variacion 3 / Era fija" : eras[2], state: makeEraVariant(seed, eras[2]) }
       ];
       variantPrompts = variants.map((item) => ({
         title: item.title,
@@ -1195,9 +1196,14 @@
       return copyText(text, $("copyAll"));
     }
 
+    let memoryWinners = null;
     function getSaved() {
+      if (memoryWinners) return memoryWinners;
       try {
-        return JSON.parse(localStorage.getItem("malnacidosPromptWinners") || "[]");
+        const parsed = JSON.parse(localStorage.getItem("malnacidosPromptWinners") || "[]");
+        return Array.isArray(parsed)
+          ? parsed.filter((item) => item && typeof item.title === "string" && typeof item.prompt === "string")
+          : [];
       } catch {
         return [];
       }
@@ -1206,59 +1212,79 @@
     function setSaved(items) {
       try {
         localStorage.setItem("malnacidosPromptWinners", JSON.stringify(items));
-      } catch {}
+        memoryWinners = null;
+        return true;
+      } catch {
+        memoryWinners = items;
+        return false;
+      }
     }
 
-    function saveWinner() {
-      const state = captureState();
+    function saveWinner(item) {
+      const winner = item || {
+        title: $("genre").value + " / " + $("preset").value,
+        prompt: $("prompt").value
+      };
+      if (!winner.prompt.trim()) {
+        showStatus("No hay prompt para guardar.", "warn");
+        return;
+      }
       const items = getSaved();
-      items.unshift({
-        title: `${state.genreName} ganador`,
-        prompt: buildPrompt(state)
-      });
-      setSaved(items.slice(0, 20));
+      if (items.some((entry) => entry.prompt === winner.prompt)) {
+        showStatus("Este prompt ya esta en Ganadores.", "good");
+        return;
+      }
+      const persistent = setSaved([winner, ...items].slice(0, 20));
       renderSaved();
+      showStatus(persistent ? "Ganador guardado." : "Guardado solo en esta sesion. Exporta antes de cerrar.", persistent ? "good" : "warn");
     }
 
     function deleteSaved(index) {
       const items = getSaved();
       items.splice(index, 1);
-      setSaved(items);
+      const persistent = setSaved(items);
       renderSaved();
+      return persistent;
     }
 
     function renderSaved() {
       const items = getSaved();
-      $("saved").innerHTML = "";
+      $("saved").replaceChildren();
+      document.querySelectorAll("[data-saved-count]").forEach((el) => { el.textContent = items.length; });
+      $("exportSaved").disabled = items.length === 0;
       if (!items.length) {
-        const empty = document.createElement("p");
-        empty.textContent = "Todavia no hay ganadores guardados en este navegador.";
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.innerHTML = icon("bookmark") + "<strong>Todavia no hay ganadores.</strong>";
         $("saved").appendChild(empty);
         return;
       }
-      items.forEach((item, index) => {
-        createPromptCard($("saved"), item.title, item.prompt, true, index);
-      });
+      items.forEach((item, index) => createPromptCard($("saved"), item.title, item.prompt, true, index));
     }
 
     function exportSaved() {
       const items = getSaved();
+      if (!items.length) {
+        showStatus("No hay ganadores para exportar.", "warn");
+        return;
+      }
       const content = [
         "MALNACIDOS MUSIC - SUNO V6 GANADORES",
         "Frase llave: FORMULA MALNACIDOS V6 BUENA",
         "",
-        ...(items.length ? items.map((item, index) => {
-          return `${index + 1}. ${item.title}\n${item.prompt}`;
-        }) : ["Sin ganadores guardados todavia."])
+        ...items.map((item, index) => (index + 1) + ". " + item.title + "\n" + item.prompt)
       ].join("\n\n");
       const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.download = "Malnacidos_Suno_v6_Ganadores.txt";
+      document.body.appendChild(link);
       link.click();
-      URL.revokeObjectURL(url);
-      showStatus("Export listo. Si iPhone no descarga, usa Copiar variantes.", "good");
+      link.remove();
+      // WebKit may consume the blob after the click handler returns.
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      showStatus("Archivo TXT preparado para descargar.", "good");
     }
 
     async function copyText(text, button) {
@@ -1275,82 +1301,284 @@
         }
       } catch {}
       if (!copied) {
+        const active = document.activeElement;
         const helper = document.createElement("textarea");
         helper.value = value;
         helper.setAttribute("readonly", "");
-        helper.style.position = "fixed";
-        helper.style.left = "0";
-        helper.style.top = "0";
-        helper.style.width = "1px";
-        helper.style.height = "1px";
-        helper.style.opacity = "0.01";
+        helper.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0.01;font-size:16px";
         document.body.appendChild(helper);
-        try {
-          helper.focus({ preventScroll: true });
-        } catch {
-          helper.focus();
-        }
+        helper.focus({ preventScroll: true });
         helper.select();
-        helper.setSelectionRange(0, helper.value.length);
-        try {
-          copied = document.execCommand("copy");
-        } catch {}
-        document.body.removeChild(helper);
+        helper.setSelectionRange(0, value.length);
+        try { copied = document.execCommand("copy"); } catch {}
+        helper.remove();
+        if (active && active.focus) active.focus({ preventScroll: true });
       }
       if (copied) {
         showStatus("Copiado.", "good");
         flashButton(button, "Copiado");
         return true;
       }
-      $("prompt").value = value;
-      $("prompt").focus();
-      $("prompt").setSelectionRange(0, $("prompt").value.length);
-      showStatus("iPhone bloqueo copiar automatico. Texto seleccionado: toca Copiar.", "warn");
-      flashButton(button, "Seleccionado");
+      $("manualCopy").value = value;
+      if (!$("copyDialog").open) $("copyDialog").showModal();
+      $("manualCopy").focus();
+      $("manualCopy").select();
+      $("manualCopy").setSelectionRange(0, value.length);
       return false;
     }
 
     async function handleAction(action, button) {
       try {
+        if (["generate", "variant", "four", "ab"].includes(action) && !validateBpm()) return;
         if (action === "generate") {
           renderPrompt();
+          switchOutput("prompt");
           showStatus("Prompt generado.", "good");
         } else if (action === "reset") {
           loadGenre();
-          showStatus("Base restaurada.", "good");
+          switchOutput("prompt");
+          showStatus("Base A restaurada.", "good");
         } else if (action === "copy") {
           await copyText($("prompt").value, button);
         } else if (action === "minimal") {
           toggleMinimalMode();
           showStatus(minimalMode ? "Minimalista activo." : "Minimalista apagado.", "good");
-        } else if (action === "variant") {
-          makeVariant();
-          showStatus("Variacion controlada lista.", "good");
-        } else if (action === "four") {
-          makeFourVariants();
-          showStatus("4 variantes listas.", "good");
+        } else if (action === "variant" || action === "four") {
+          const available = lockFields.filter(([key, id]) => !lock(id)
+            && !($("genre").value === "Corridos Tumbados Requinto" && key === "drums"));
+          if (!available.length) {
+            showStatus("Todos los campos estan fijos. Abre un candado para variar.", "warn");
+            return;
+          }
+          if (action === "variant") {
+            makeVariant();
+            switchOutput("prompt");
+            showStatus("Variacion lista.", "good");
+          } else {
+            makeFourVariants();
+            updateVariantUI();
+            switchOutput("variants");
+            showStatus("4 variantes listas.", "good");
+          }
         } else if (action === "ab") {
+          const target = $("abTarget").value;
+          const keys = target === "drumsBass" ? ["drums", "bass"] : target === "leadAccent" ? ["lead", "accent"] : [target];
+          if (lockFields.some(([key, id]) => keys.includes(key) && lock(id))) {
+            showStatus("Abre el candado del campo elegido para comparar.", "warn");
+            return;
+          }
           makeExactAB();
-          showStatus("A/B exacto listo.", "good");
+          updateVariantUI();
+          switchOutput("variants");
+          showStatus("Comparacion A/B lista.", "good");
         } else if (action === "copyAll") {
           await copyAllVariants();
         } else if (action === "save") {
           saveWinner();
-          showStatus("Ganador guardado.", "good");
         } else if (action === "exportSaved") {
           exportSaved();
         }
       } catch (error) {
-        showStatus("Algo fallo en este boton. Ya puedes avisarme con esta pantalla.", "warn");
+        showStatus("No pude completar esta accion. Intenta de nuevo.", "warn");
         console.error(error);
       }
     }
 
     window.handleAction = handleAction;
 
-    fieldIds.forEach((field) => $(field).addEventListener("change", renderPrompt));
+    const lockFields = [
+      ["mood", "lockMood"], ["bpm", "lockBpm"], ["era", "lockEra"],
+      ["drums", "lockDrums"], ["bass", "lockBass"], ["lead", "lockLead"],
+      ["accent", "lockAccent"], ["textures", "lockTextures"]
+    ];
+    const sessionKey = "malnacidosPromptSessionV22";
+    let initializing = true;
 
+    function icon(name) {
+      return '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+    }
+
+    function iconButton(name, label, action) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "secondary icon-button";
+      button.title = label;
+      button.setAttribute("aria-label", label);
+      button.innerHTML = icon(name);
+      button.onclick = action;
+      return button;
+    }
+
+    function validateBpm() {
+      const field = $("bpm");
+      const value = Number(field.value);
+      const valid = field.value.trim() !== "" && Number.isInteger(value) && value >= 40 && value <= 240;
+      field.setAttribute("aria-invalid", String(!valid));
+      if (!valid) showStatus("BPM: escribe un numero entero entre 40 y 240.", "warn");
+      return valid;
+    }
+
+    function switchView(view) {
+      const saved = view === "saved";
+      document.body.dataset.view = saved ? "saved" : "studio";
+      $("studioView").hidden = saved;
+      $("savedView").hidden = !saved;
+      $("navStudio").setAttribute("aria-current", saved ? "false" : "page");
+      $("navSaved").setAttribute("aria-current", saved ? "page" : "false");
+      window.scrollTo(0, 0);
+    }
+
+    function setMobilePane(pane) {
+      document.body.dataset.mobilePane = pane;
+      $("mobileControls").setAttribute("aria-pressed", String(pane === "controls"));
+      $("mobileOutput").setAttribute("aria-pressed", String(pane === "output"));
+      if (window.matchMedia("(max-width: 740px)").matches) window.scrollTo(0, 0);
+    }
+
+    function switchOutput(pane) {
+      const variants = pane === "variants";
+      $("promptPane").hidden = variants;
+      $("variantsPane").hidden = !variants;
+      $("tabPrompt").setAttribute("aria-selected", String(!variants));
+      $("tabVariants").setAttribute("aria-selected", String(variants));
+      $("tabPrompt").tabIndex = variants ? -1 : 0;
+      $("tabVariants").tabIndex = variants ? 0 : -1;
+      setMobilePane("output");
+    }
+
+    function updateVariantUI() {
+      $("variantCount").textContent = variantPrompts.length;
+      $("copyAll").disabled = !variantPrompts.length;
+    }
+
+    function clearVariants() {
+      variantPrompts = [];
+      $("variants").innerHTML = '<div class="empty-state">' + icon("layers") + '<strong>Todavia no hay variantes.</strong></div>';
+      updateVariantUI();
+    }
+
+    function renderGenreLinks() {
+      $("genreLinks").replaceChildren();
+      Object.keys(data).forEach((name) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "genre-link";
+        button.textContent = name;
+        button.dataset.genre = name;
+        button.setAttribute("aria-pressed", String(name === $("genre").value));
+        button.onclick = () => {
+          $("genre").value = name;
+          loadGenre();
+          switchView("studio");
+        };
+        $("genreLinks").appendChild(button);
+      });
+    }
+
+    function updateStudioUI() {
+      $("activeSummary").textContent = $("genre").value + " / " + $("preset").value;
+      document.querySelectorAll(".genre-link").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.genre === $("genre").value));
+      });
+      $("textureCount").textContent = selectedTextures().length + " texturas";
+      $("instrumentsSection").querySelector(".detail-meta").textContent =
+        $("genre").value === "Corridos Tumbados Requinto" ? "Solo cuerdas" : "Drums, bajo y melodia";
+      const structure = $("structure").value;
+      $("structureMeta").textContent = structure.includes("24-bar") ? "24 barras" : structure.startsWith("cypher:") ? "Cypher" : "Cancion";
+      const sections = {
+        intro: "Intro", verse: "Verso", hook: "Coro", bridge: "Puente", outro: "Outro",
+        "24-bar verse": "Verso / 24", "32-bar verse": "Verso / 32", "final hook": "Coro final",
+        "short breakdown": "Breakdown", "long verse": "Verso largo", "rapper switch": "Cambio MC",
+        "short break": "Pausa", "beat drop": "Drop"
+      };
+      $("arrangement").replaceChildren();
+      structure.replace(/^cypher:\s*/, "").split(", ").forEach((section) => {
+        const label = document.createElement("span");
+        label.textContent = sections[section] || section;
+        if (section.includes("verse")) label.className = "verse";
+        if (section.includes("hook")) label.className = "hook";
+        $("arrangement").appendChild(label);
+      });
+      updateMinimalButton();
+    }
+
+    function persistSession() {
+      if (initializing || !validateBpm()) return;
+      try {
+        localStorage.setItem(sessionKey, JSON.stringify({
+          state: captureState(), preset: $("preset").value,
+          intensity: $("intensity").value, minimalMode,
+          locks: Object.fromEntries(lockFields.map(([, id]) => [id, lock(id)])),
+          prompt: $("prompt").value
+        }));
+      } catch {
+        document.querySelector(".local-label").textContent = "Guardado no disponible";
+      }
+    }
+
+    function restoreSession() {
+      try {
+        const session = JSON.parse(localStorage.getItem(sessionKey) || "null");
+        if (!session || !session.state || !Object.prototype.hasOwnProperty.call(data, session.state.genreName)) return;
+        const state = session.state;
+        $("genre").value = state.genreName;
+        loadGenre();
+        if (getGenre().presets.some((preset) => preset.name === session.preset)) {
+          $("preset").value = session.preset;
+          applyPreset();
+        }
+        ["mood", "era", "drums", "bass", "lead", "accent", "structure"].forEach((id) => {
+          if ([...$(id).options].some((option) => option.value === state[id])) $(id).value = state[id];
+        });
+        const bpm = Number(state.bpm);
+        if (Number.isInteger(bpm) && bpm >= 40 && bpm <= 240) $("bpm").value = bpm;
+        if (Array.isArray(state.textures)) setSelectedTextures(state.textures);
+        if (typeof state.lessAmerican === "boolean") $("lessAmerican").checked = state.lessAmerican;
+        minimalMode = session.minimalMode === true;
+        if (["1", "2", "3"].includes(session.intensity)) $("intensity").value = session.intensity;
+        lockFields.forEach(([, id]) => { $(id).checked = Boolean(session.locks && session.locks[id]); });
+        renderPrompt();
+        if (typeof session.prompt === "string") $("prompt").value = session.prompt;
+        updateCounts($("prompt").value);
+        updateQuality(captureState(), $("prompt").value);
+        updateStudioUI();
+      } catch {}
+    }
+
+    fieldIds.forEach((field) => $(field).addEventListener("change", renderPrompt));
+    lockFields.forEach(([, id]) => $(id).addEventListener("change", persistSession));
+    $("intensity").addEventListener("change", persistSession);
+    $("prompt").addEventListener("input", () => {
+      updateCounts($("prompt").value);
+      updateQuality(captureState(), $("prompt").value);
+      persistSession();
+    });
+    $("genreSearch").addEventListener("input", () => {
+      const query = $("genreSearch").value.trim().toLowerCase();
+      let matches = 0;
+      document.querySelectorAll(".genre-link").forEach((button) => {
+        button.hidden = !button.textContent.toLowerCase().includes(query);
+        if (!button.hidden) matches += 1;
+      });
+      $("genreEmpty").hidden = matches > 0;
+    });
+    ["tabPrompt", "tabVariants"].forEach((id) => $(id).addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === "Home" ? "prompt" : event.key === "End" ? "variants" : id === "tabPrompt" ? "variants" : "prompt";
+      switchOutput(next);
+      $(next === "prompt" ? "tabPrompt" : "tabVariants").focus();
+    }));
+    window.addEventListener("storage", (event) => {
+      if (event.key === "malnacidosPromptWinners") {
+        memoryWinners = null;
+        renderSaved();
+      }
+    });
+    renderGenreLinks();
     loadGenre();
+    restoreSession();
+    initializing = false;
     renderSaved();
   </script>
 </body>
