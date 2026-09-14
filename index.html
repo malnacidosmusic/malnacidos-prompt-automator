@@ -343,9 +343,8 @@
           <section class="control-panel" aria-label="Sonido y estructura">
             <div class="section-head"><h2>Tu base</h2><button id="reset" class="quiet icon-button" title="Restaurar Base A" aria-label="Restaurar Base A" onclick="handleAction('reset', this)"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button></div>
             <div class="field">
-              <label>Subgenero activo</label>
-              <div id="activeGenre" class="active-choice">Rap Underground</div>
-              <select id="genre" hidden aria-hidden="true" tabindex="-1" onchange="loadGenre()">
+              <label for="genre">Subgenero</label>
+              <select id="genre" onchange="loadGenre()">
                 <option>Rap Underground</option><option>Rap Congalero</option><option>Trap</option><option>Drill</option><option>Bangers</option><option>Reggaeton</option><option>G-Funk</option><option>Boom Bap</option><option>Conscious / Street Rap</option><option>R&amp;B</option><option>Corridos Tumbados Beat</option><option>Corridos Tumbados Requinto</option>
               </select>
             </div>
@@ -1479,7 +1478,6 @@
 
     function updateStudioUI() {
       $("activeSummary").textContent = $("genre").value + " / " + $("preset").value;
-      $("activeGenre").textContent = $("genre").value;
       document.querySelectorAll(".genre-link").forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.genre === $("genre").value));
       });
