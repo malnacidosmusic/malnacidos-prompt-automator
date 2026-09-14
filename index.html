@@ -313,7 +313,7 @@
       <button class="nav-button" id="navSaved" onclick="switchView('saved')"><svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg>Ganadores <span class="badge" data-saved-count>0</span></button>
     </nav>
     <div class="library-nav">
-      <div class="nav-label">Subgeneros <span>13</span></div>
+      <div class="nav-label">Subgeneros <span>12</span></div>
       <label class="genre-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input id="genreSearch" type="search" aria-label="Buscar subgenero" placeholder="Buscar..." autocomplete="off"></label>
       <nav id="genreLinks" class="genre-links" aria-label="Subgeneros"></nav>
       <p id="genreEmpty" class="no-results" hidden>Sin coincidencias.</p>
@@ -464,24 +464,6 @@
         ]
       },
       "Rap Congalero": {
-        bpm: 95,
-        bpms: [92, 94, 95, 96, 98, 100],
-        moods: ["puercote", "teibolero", "congalero", "guapachoso", "callejero fiestero", "malandro alegre"],
-        era: ["rap puercote mexicano", "electro-cumbia callejera", "technolandro crudo", "hibrido Malnacidos guapachoso"],
-        base: "Rap puercote mexicano",
-        drums: ["ritmo electro-cumbia rapero", "caja seca y clap de fiesta", "bateria programada con swing guapachoso", "kick seco con palmada", "percusion de teibol sencilla", "tambor seco de barrio"],
-        bass: ["bajo sonidero simple", "bajo gordo de teclado", "linea de bajo cumbiera repetitiva", "sub bajo redondo sin slides", "bajo seco rebotado", "grave de fiesta callejera"],
-        lead: ["teclado de cumbia sonidera barato", "organo sintetico de baile de barrio", "melodia guapachosa de teclado", "riff electro rasposo", "lead sonidero sencillo", "teclado malandro repetitivo", "synth brass barato y seco", "piano de teclado con nota repetida"],
-        accent: ["golpes de teclado", "silencio antes del coro", "fill de palmadas corto", "sirena barata discreta", "breakdown de percusion y bajo", "respuesta de teclado corta"],
-        extras: ["rap de teibol", "sabor sonidero", "vulgar pero callejero", "fiesta de barrio", "minimalista con swing", "para rapear y bailar"],
-        bans: ["no trap", "no drill", "no boom bap", "no reggaeton moderno", "no corridos", "no guitarras tumbadas", "no banda", "no trumpet", "no EDM festival", "no pop", "no lo-fi chill"],
-        lessAmericanBans: ["no sonido gringo comercial", "no brillo comercial", "no R&B", "no smooth jazz"],
-        presets: [
-          { name: "Base A - Electro esqueleto", mood: "agresivo", bpm: 92, era: "esqueleto electro para remix", drums: "hard dry kick con bounce electro", bass: "short 808 hits", lead: "two-note square synth hook", accent: "stop-start pause", textures: ["pocas capas", "espacio para rap"] },
-          { name: "Base B - Congal final", mood: "congalero", bpm: 95, era: "rap puercote mexicano", drums: "kick electro duro con clap de fiesta", bass: "bajo sonidero simple y rebotado", lead: "teclado sonidero corto", accent: "breakdown de percusion y bajo", textures: ["fiesta de barrio", "rapear y bailar"] }
-        ]
-      },
-      "Urban Electro Hybrid": {
         bpm: 90,
         bpms: [90, 92],
         moods: ["seco", "agresivo", "callejero", "pesado", "nocturno"],
@@ -494,7 +476,7 @@
         extras: ["heavy vocal space", "minimal arrangement", "rowdy night energy", "chant hook space", "few sounds", "clean skeleton"],
         bans: ["no boom bap", "no reggaeton", "no cumbia", "no latin percussion", "no EDM drop", "no techno lead", "no full house track", "no trap hi-hat rolls", "no guitars", "no arabic", "no middle eastern", "no oriental scale"],
         lessAmericanBans: ["no glossy pop", "no radio pop", "no bright party synth"],
-        method: "Metodo recomendado: primero genera un esqueleto electro limpio. Luego usa remix/remake con audio reference para volverlo mas urbano. Si sale rapido, baja Speed con Keep Pitch ON hasta 90-92 BPM. No copies esta nota en Suno.",
+        method: "Primero genera un esqueleto electro limpio. Luego usa remix/remake con audio reference para volverlo mas urbano. Si sale rapido, baja Speed con Keep Pitch ON hasta 90-92 BPM. No copies esta nota en Suno.",
         presets: [
           { name: "Base A", mood: "pesado", bpm: 90, era: "hibrido Malnacidos 90", drums: "hard dry kick", bass: "short 808 hits", lead: "simple two-note synth hook", accent: "stop-start pause", textures: ["heavy vocal space", "minimal arrangement"] },
           { name: "Base B", mood: "agresivo", bpm: 92, era: "remake urbano pesado", drums: "tight electro bounce", bass: "one-note bass pulse", lead: "dry synth stab", accent: "short breakdown", textures: ["rowdy night energy", "chant hook space"] }
