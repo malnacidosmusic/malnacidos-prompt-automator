@@ -343,14 +343,16 @@
           <section class="control-panel" aria-label="Sonido y estructura">
             <div class="section-head"><h2>Tu base</h2><button id="reset" class="quiet icon-button" title="Restaurar Base A" aria-label="Restaurar Base A" onclick="handleAction('reset', this)"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button></div>
             <div class="field">
-              <label for="genre">Subgenero</label>
-              <select id="genre" onchange="loadGenre()">
+              <label>Subgenero</label>
+              <div id="genreDisplay" class="active-choice" aria-live="polite">Rap Underground</div>
+              <div class="sr-only">
+              <select id="genre" aria-hidden="true" tabindex="-1" onchange="loadGenre()">
                 <option>Rap Underground</option><option>Rap Congalero</option><option>Trap</option><option>Drill</option><option>Bangers</option><option>Reggaeton</option><option>G-Funk</option><option>Boom Bap</option><option>Conscious / Street Rap</option><option>R&amp;B</option><option>Corridos Tumbados Beat</option><option>Corridos Tumbados Requinto</option>
               </select>
             </div>
             <div class="row">
               <div class="field"><label for="preset">Preset oficial</label><select id="preset" onchange="applyPreset()"><option>Base A</option><option>Base B</option></select></div>
-              <div class="field"><label for="intensity">Cambios al variar</label><select id="intensity"><option value="1">Suave / 1</option><option value="2" selected>Media / 2</option><option value="3">Alta / 3</option></select></div>
+                <div class="field"><label for="intensity">Cambios al variar</label><select id="intensity"><option value="1">Suave / 1</option><option value="2" selected>Media / 2</option><option value="3">Alta / 3</option><option value="4">Muy alta / 4 cambios</option></select></div>
             </div>
             <div class="row mood-row">
               <div class="field"><div class="field-head"><label for="mood">Mood</label><label class="lock" title="Fijar mood al variar"><input id="lockMood" type="checkbox" aria-label="Fijar mood"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></label></div><select id="mood"><option>oscuro</option></select></div>
@@ -1460,6 +1462,7 @@
 
     function updateStudioUI() {
       $("activeSummary").textContent = $("genre").value + " / " + $("preset").value;
+      $("genreDisplay").textContent = $("genre").value;
       document.querySelectorAll(".genre-link").forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.genre === $("genre").value));
       });
@@ -1518,7 +1521,7 @@
         if (Array.isArray(state.textures)) setSelectedTextures(state.textures);
         if (typeof state.lessAmerican === "boolean") $("lessAmerican").checked = state.lessAmerican;
         minimalMode = session.minimalMode === true;
-        if (["1", "2", "3"].includes(session.intensity)) $("intensity").value = session.intensity;
+        if (["1", "2", "3", "4"].includes(session.intensity)) $("intensity").value = session.intensity;
         lockFields.forEach(([, id]) => { $(id).checked = Boolean(session.locks && session.locks[id]); });
         renderPrompt();
         if (typeof session.prompt === "string") $("prompt").value = session.prompt;
